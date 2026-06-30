@@ -1,0 +1,40 @@
+# macOS
+.DS_Store
+
+# Xcode user data and local state
+*.xcuserstate
+xcuserdata/
+
+# Xcode workspace data (keep shared settings)
+*.xcworkspace/xcuserdata/
+
+# Build products and derived data
+build/
+DerivedData/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# Fastlane artifacts
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/test_output/
+
+# CocoaPods
+Pods/
+
+# Carthage
+Carthage/Build/
+
+# Archives and generated docs
+*.xcarchive
+*.doccarchive
+
+# Playground
+timeline.xctimeline
+playground.xcworkspace
+
+# Dependency managers and tooling
+Mint/
