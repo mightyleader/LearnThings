@@ -52,10 +52,15 @@ struct ContentView: View {
         }
         .onAppear {
             focusedTarget = .tile(alphabet[selectedIndex].letter)
+            // selectedIndex starts at 0, so onChange does not fire on first launch.
+            speaker.speak(letterFor: alphabet[selectedIndex])
         }
         .onChange(of: selectedIndex) { _, newValue in
-            if !showingGrid {
+            if showingGrid {
                 speaker.speak(letterFor: alphabet[newValue])
+            }
+            else {
+                speaker.speak(phraseFor: alphabet[newValue])
             }
         }
     }
@@ -83,7 +88,6 @@ struct ContentView: View {
                         selectedIndex = index
                         showingGrid = false
                         focusedTarget = .hero
-//                        speaker.speak(item)
                     } label: {
                         LetterPairLabel(
                             uppercase: item.uppercaseLetter,
@@ -146,7 +150,7 @@ struct ContentView: View {
                 showingGrid = true
                 focusedTarget = .tile(currentLetter.letter)
             }
-            .onAppear() {
+            .onAppear {
                 speaker.speak(phraseFor: currentLetter)
             }
         }
@@ -226,9 +230,11 @@ struct ContentView: View {
 
         switch direction {
         case .left:
-            target = (col == 0) ? rowEndIndex(row) : (currentIndex - 1)
+            // Mirror right movement: step backward, wrapping from A to Z.
+            target = (currentIndex == 0) ? lastIndex : (currentIndex - 1)
         case .right:
-            target = (currentIndex == rowEndIndex(row)) ? (row * columns) : (currentIndex + 1)
+            // Move linearly through the grid; wrap to A after the last tile.
+            target = (currentIndex == lastIndex) ? 0 : (currentIndex + 1)
         case .up:
             let targetRow = nextValidRowUp(from: row, col: col)
             target = (targetRow * columns) + col
@@ -542,7 +548,7 @@ private final class LetterSpeaker: ObservableObject {
         utterance.postUtteranceDelay = postDelay
         print("Speaking: \(letter.letter)")
         
-        let utterance2 = AVSpeechUtterance(string: "\(letter.letter) is for \(letter.word).")
+        let utterance2 = AVSpeechUtterance(string: "is for \(letter.word).")
         utterance2.voice = preferredVoice
         utterance2.rate = Float(wordRate)
         utterance2.pitchMultiplier = Float(pitch)
