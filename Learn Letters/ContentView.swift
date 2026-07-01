@@ -30,11 +30,15 @@ struct ContentView: View {
     @State private var selectedIndex = 0
     @State private var showingGrid = true
     @FocusState private var focusedTarget: FocusTarget?
+    @State private var isAutoPlayActive = false
+    @State private var autoPlayTimer: Timer?
 
     private let alphabet = LetterCard.samples
     private let letterFontName = "AkzidenzGroteskBE-Md"
     private let tileFontName = "AkzidenzGroteskBE-Bold"
     private let wordFontName = "AkzidenzGroteskBE-Bold"
+    private let gridDwellTime: TimeInterval = 1.0
+    private let detailDwellTime: TimeInterval = 3.0
 
     private var currentLetter: LetterCard {
         alphabet[selectedIndex]
@@ -55,6 +59,9 @@ struct ContentView: View {
             // selectedIndex starts at 0, so onChange does not fire on first launch.
             speaker.speak(letterFor: alphabet[selectedIndex])
         }
+        .onDisappear {
+            stopAutoPlay()
+        }
         .onChange(of: selectedIndex) { _, newValue in
             if showingGrid {
                 speaker.speak(letterFor: alphabet[newValue])
@@ -62,6 +69,10 @@ struct ContentView: View {
             else {
                 speaker.speak(phraseFor: alphabet[newValue])
             }
+        }
+        .onChange(of: showingGrid) { _, _ in
+            // Stop autoplay when switching views
+            stopAutoPlay()
         }
     }
 
@@ -85,6 +96,7 @@ struct ContentView: View {
                     let isFocused = focusedTarget == .tile(item.letter)
 
                     Button {
+                        stopAutoPlay()
                         selectedIndex = index
                         showingGrid = false
                         focusedTarget = .hero
@@ -113,6 +125,9 @@ struct ContentView: View {
             .padding(.horizontal, hPad)
             .padding(.vertical, vPad)
             .onMoveCommand(perform: handleGridMove)
+            .onPlayPauseCommand {
+                handleGridPlayPause()
+            }
         }
     }
 
@@ -146,9 +161,15 @@ struct ContentView: View {
             .buttonStyle(.borderless)
             .focused($focusedTarget, equals: .hero)
             .onMoveCommand(perform: handleHeroMove)
+            .onPlayPauseCommand {
+                handleDetailPlayPause()
+            }
             .onExitCommand {
                 showingGrid = true
-                focusedTarget = .tile(currentLetter.letter)
+                // Use DispatchQueue to allow the view hierarchy to update before setting focus
+                DispatchQueue.main.async {
+                    focusedTarget = .tile(currentLetter.letter)
+                }
             }
             .onAppear {
                 speaker.speak(phraseFor: currentLetter)
@@ -169,6 +190,7 @@ struct ContentView: View {
     }
 
     private func handleHeroMove(_ direction: MoveCommandDirection) {
+        stopAutoPlay()
         switch direction {
         case .left:
             previousLetter()
@@ -187,7 +209,59 @@ struct ContentView: View {
         selectedIndex = (selectedIndex + 1) % alphabet.count
     }
 
+    private func handleGridPlayPause() {
+        if isAutoPlayActive {
+            stopAutoPlay()
+        } else {
+            startAutoPlayGrid()
+        }
+    }
+
+    private func handleDetailPlayPause() {
+        if isAutoPlayActive {
+            stopAutoPlay()
+        } else {
+            startAutoPlayDetail()
+        }
+    }
+
+    private func startAutoPlayGrid() {
+        isAutoPlayActive = true
+        scheduleNextGridLetter()
+    }
+
+    private func startAutoPlayDetail() {
+        isAutoPlayActive = true
+        scheduleNextDetailLetter()
+    }
+
+    private func scheduleNextGridLetter() {
+        autoPlayTimer = Timer.scheduledTimer(withTimeInterval: gridDwellTime, repeats: false) { _ in
+            if isAutoPlayActive {
+                nextLetter()
+                focusedTarget = .tile(alphabet[selectedIndex].letter)
+                scheduleNextGridLetter()
+            }
+        }
+    }
+
+    private func scheduleNextDetailLetter() {
+        autoPlayTimer = Timer.scheduledTimer(withTimeInterval: detailDwellTime, repeats: false) { _ in
+            if isAutoPlayActive {
+                nextLetter()
+                scheduleNextDetailLetter()
+            }
+        }
+    }
+
+    private func stopAutoPlay() {
+        isAutoPlayActive = false
+        autoPlayTimer?.invalidate()
+        autoPlayTimer = nil
+    }
+
     private func handleGridMove(_ direction: MoveCommandDirection) {
+        stopAutoPlay()
         guard !alphabet.isEmpty else { return }
 
         let columns = Layout.gridColumns
@@ -200,6 +274,8 @@ struct ContentView: View {
         let col = currentIndex % columns
 
         let totalRows = Int(ceil(Double(count) / Double(columns)))
+
+        // ...existing code...
 
         func rowEndIndex(_ r: Int) -> Int {
             min(((r + 1) * columns) - 1, lastIndex)
