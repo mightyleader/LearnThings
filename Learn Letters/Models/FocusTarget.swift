@@ -9,5 +9,5 @@ import Foundation
 
 enum FocusTarget: Hashable {
     case hero
-    case tile(String)
+    case tile(String) // String representation of tile ID (letter or number)
 }
