@@ -6,14 +6,14 @@
 import SwiftUI
 
 enum ColourKind: String, CaseIterable, Identifiable {
-    case red, orange, yellow, green, blue, indigo, violet, pink, grey, black, white
+    case red, orange, yellow, green, blue, purple, pink, grey, black, white
 
     var id: String { rawValue }
     var name: String { rawValue.capitalized }
 
     var labelColor: Color {
         switch self {
-        case .red, .orange, .green, .blue, .indigo, .violet, .black:
+        case .red, .orange, .green, .blue, .purple, .black:
             return .white
         case .yellow, .pink, .grey, .white:
             return .black

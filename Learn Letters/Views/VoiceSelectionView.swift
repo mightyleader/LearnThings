@@ -10,10 +10,21 @@ import SwiftUI
 struct VoiceSelectionView: View {
     @ObservedObject var speaker: LetterSpeaker
     @Binding var selectedVoiceIdentifier: String
+    @Binding var voicesEnabled: Bool
     var onDone: () -> Void = {}
 
     var body: some View {
         List {
+            Section {
+                Toggle("Voices on", isOn: $voicesEnabled)
+
+                if !voicesEnabled {
+                    Text("Voices are off. The app will not speak letters, numbers, shapes, colours, or voice previews.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
             Section {
                 if let selected = speaker.voiceOption(for: selectedVoiceIdentifier) {
                     VStack(alignment: .leading, spacing: 6) {
@@ -76,6 +87,8 @@ struct VoiceSelectionView: View {
                         }
                         .buttonStyle(.plain)
                         .accessibilityLabel("Play sample for \(voice.name)")
+                        .disabled(!voicesEnabled)
+                        .opacity(voicesEnabled ? 1.0 : 0.35)
                     }
                 }
             } header: {

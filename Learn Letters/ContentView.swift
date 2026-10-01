@@ -8,16 +8,33 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var speaker = LetterSpeaker()
-    @State private var selectedVoiceIdentifier = ""
+    private enum VoiceSettings {
+        static let selectedVoiceIdentifierKey = "selectedVoiceIdentifier"
+        static let voicesEnabledKey = "voicesEnabled"
+    }
+
+    @AppStorage(VoiceSettings.selectedVoiceIdentifierKey) private var selectedVoiceIdentifier = ""
+    @AppStorage(VoiceSettings.voicesEnabledKey) private var voicesEnabled = true
+    @StateObject private var speaker: LetterSpeaker
     @State private var selectedMode: AppMode?
     @State private var showModeSelection = true
     @State private var showingVoiceSelection = false
+
+    init() {
+        let storedVoiceIdentifier = UserDefaults.standard.string(forKey: VoiceSettings.selectedVoiceIdentifierKey)
+        let storedVoicesEnabled = UserDefaults.standard.object(forKey: VoiceSettings.voicesEnabledKey) as? Bool ?? true
+        let speaker = LetterSpeaker(preferredVoiceIdentifier: storedVoiceIdentifier?.isEmpty == false ? storedVoiceIdentifier : nil)
+        speaker.isSpeechEnabled = storedVoicesEnabled
+        _speaker = StateObject(wrappedValue: speaker)
+    }
 
     var body: some View {
         rootView
             .onAppear {
                 applyPreferredVoice()
+            }
+            .onChange(of: voicesEnabled) { _, newValue in
+                speaker.isSpeechEnabled = newValue
             }
             .focusEffectDisabled(true)
     }
@@ -28,6 +45,7 @@ struct ContentView: View {
             VoiceSelectionView(
                 speaker: speaker,
                 selectedVoiceIdentifier: $selectedVoiceIdentifier,
+                voicesEnabled: $voicesEnabled,
                 onDone: {
                     showingVoiceSelection = false
                 }
@@ -35,6 +53,7 @@ struct ContentView: View {
         } else if showModeSelection {
             ModeSelectionView(
                 selectedMode: $selectedMode,
+                voicesEnabled: $voicesEnabled,
                 onOpenVoiceSettings: {
                     selectedVoiceIdentifier = speaker.selectedVoiceIdentifier ?? speaker.recommendedVoiceIdentifier ?? ""
                     showingVoiceSelection = true
@@ -85,9 +104,12 @@ struct ContentView: View {
     }
 
     private func applyPreferredVoice() {
-        if speaker.selectedVoiceIdentifier != speaker.recommendedVoiceIdentifier {
-            speaker.selectVoice(identifier: speaker.recommendedVoiceIdentifier)
+        let preferredVoiceIdentifier = selectedVoiceIdentifier.isEmpty ? nil : selectedVoiceIdentifier
+
+        if speaker.selectedVoiceIdentifier != preferredVoiceIdentifier {
+            speaker.selectVoice(identifier: preferredVoiceIdentifier)
         }
+        speaker.isSpeechEnabled = voicesEnabled
         selectedVoiceIdentifier = speaker.selectedVoiceIdentifier ?? speaker.recommendedVoiceIdentifier ?? ""
     }
 }

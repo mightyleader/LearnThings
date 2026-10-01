@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ModeSelectionView: View {
     @Binding var selectedMode: AppMode?
+    @Binding var voicesEnabled: Bool
     var onOpenVoiceSettings: () -> Void = {}
     @FocusState private var focusedButton: ModeButton?
     @State private var lastFocusedBottomMode: ModeButton = .shapes
@@ -92,15 +93,28 @@ struct ModeSelectionView: View {
                 Spacer(minLength: geo.size.height * 0.035)
 
                 Button(action: onOpenVoiceSettings) {
-                    Text("voices")
-                        .font(.custom(subtitleFontName, size: geo.size.height * 0.045))
-                        .foregroundStyle(Color(red: 0.18, green: 0.22, blue: 0.32))
-                        .frame(width: voiceWidth, height: voiceHeight)
-                        .background(
-                            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                .fill(focusedButton == .voice ? focusBlue : buttonBase)
-                        )
-                        .scaleEffect(focusedButton == .voice ? 1.04 : 1.0)
+                    HStack(spacing: geo.size.width * 0.012) {
+                        Text("voices")
+                        if !voicesEnabled {
+                            Text("off")
+                                .font(.custom(buttonFontName, size: geo.size.height * 0.022))
+                                .padding(.horizontal, geo.size.width * 0.02)
+                                .padding(.vertical, geo.size.height * 0.004)
+                                .background(
+                                    Capsule(style: .continuous)
+                                        .fill(Color(red: 0.94, green: 0.64, blue: 0.64))
+                                )
+                                .foregroundStyle(Color(red: 0.32, green: 0.08, blue: 0.08))
+                        }
+                    }
+                    .font(.custom(subtitleFontName, size: geo.size.height * 0.045))
+                    .foregroundStyle(Color(red: 0.18, green: 0.22, blue: 0.32))
+                    .frame(width: voiceWidth, height: voiceHeight)
+                    .background(
+                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                            .fill(focusedButton == .voice ? focusBlue : buttonBase)
+                    )
+                    .scaleEffect(focusedButton == .voice ? 1.04 : 1.0)
                 }
                 .buttonStyle(.borderless)
                 .focused($focusedButton, equals: .voice)
@@ -223,5 +237,5 @@ enum AppMode {
 }
 
 #Preview {
-    ModeSelectionView(selectedMode: .constant(nil))
+    ModeSelectionView(selectedMode: .constant(nil), voicesEnabled: .constant(true))
 }

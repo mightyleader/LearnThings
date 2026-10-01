@@ -43,8 +43,8 @@ enum LearningPalette {
 
     private static let colourTokens: [ColourKind: String] = [
         .red: "#EE220C", .orange: "#FEAE00", .yellow: "#ffee00",
-        .green: "#61D836", .blue: "#1D96F0", .indigo: "#4B0082",
-        .violet: "#9400D3", .pink: "#FF95CA", .grey: "#929292",
+        .green: "#61D836", .blue: "#1D96F0", .purple: "#7000AB",
+        .pink: "#FF95CA", .grey: "#929292",
         .black: "#000000", .white: "#FFFFFF"
     ]
 
@@ -83,7 +83,6 @@ enum LearningPalette {
         case "teal": return .teal
         case "cyan": return .cyan
         case "blue": return .blue
-        case "indigo": return .indigo
         case "purple": return .purple
         case "pink": return .pink
         case "brown": return .brown

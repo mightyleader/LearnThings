@@ -54,6 +54,14 @@ final class LetterSpeaker: ObservableObject {
     private var previewVoiceIdentifier: String?
     private let allVoices: [AVSpeechSynthesisVoice]
     @Published private(set) var selectedVoiceIdentifier: String?
+    @Published var isSpeechEnabled = true {
+        didSet {
+            if !isSpeechEnabled {
+                synthesizer.stopSpeaking(at: .immediate)
+                previewVoiceIdentifier = nil
+            }
+        }
+    }
     let voiceOptions: [SpeechVoiceOption]
     var recommendedVoiceIdentifier: String? {
         Self.bestVoice(from: allVoices)?.identifier
@@ -99,6 +107,8 @@ final class LetterSpeaker: ObservableObject {
     }
 
     func previewVoice(identifier: String) {
+        guard isSpeechEnabled else { return }
+
         if previewVoiceIdentifier == identifier, synthesizer.isSpeaking {
             synthesizer.stopSpeaking(at: .immediate)
             previewVoiceIdentifier = nil
@@ -121,6 +131,8 @@ final class LetterSpeaker: ObservableObject {
     }
 
     func speak(letterFor letter: LetterCard) {
+        guard isSpeechEnabled else { return }
+
         synthesizer.stopSpeaking(at: .immediate)
         
         let utterance = AVSpeechUtterance(string: "\(letter.letter).")
@@ -132,6 +144,8 @@ final class LetterSpeaker: ObservableObject {
     }
     
     func speak(phraseFor letter: LetterCard) {
+        guard isSpeechEnabled else { return }
+
         synthesizer.stopSpeaking(at: .immediate)
         
         let utterance = AVSpeechUtterance(string: "\(letter.letter).")
@@ -151,6 +165,8 @@ final class LetterSpeaker: ObservableObject {
     }
     
     func speak(numberFor number: NumberCard) {
+        guard isSpeechEnabled else { return }
+
         synthesizer.stopSpeaking(at: .immediate)
         
         let utterance = AVSpeechUtterance(string: "\(number.displayNumber).")
@@ -162,6 +178,8 @@ final class LetterSpeaker: ObservableObject {
     }
     
     func speak(phraseFor number: NumberCard) {
+        guard isSpeechEnabled else { return }
+
         synthesizer.stopSpeaking(at: .immediate)
         
         let utterance = AVSpeechUtterance(string: "\(number.displayNumber).")
@@ -175,6 +193,8 @@ final class LetterSpeaker: ObservableObject {
     }
 
     func speak(shapeFor shape: ShapeCard) {
+        guard isSpeechEnabled else { return }
+
         synthesizer.stopSpeaking(at: .immediate)
 
         let utterance = AVSpeechUtterance(string: "\(shape.label).")
@@ -186,6 +206,8 @@ final class LetterSpeaker: ObservableObject {
     }
 
     func speak(phraseFor shape: ShapeCard) {
+        guard isSpeechEnabled else { return }
+
         synthesizer.stopSpeaking(at: .immediate)
 
         let utterance = AVSpeechUtterance(string: "\(shape.label).")
@@ -198,6 +220,8 @@ final class LetterSpeaker: ObservableObject {
     }
 
     func speak(colourFor colour: ColourCard) {
+        guard isSpeechEnabled else { return }
+
         synthesizer.stopSpeaking(at: .immediate)
 
         let utterance = AVSpeechUtterance(string: "\(colour.label).")
