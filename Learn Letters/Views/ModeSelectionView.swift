@@ -65,7 +65,7 @@ struct ModeSelectionView: View {
                     )
                     makeModeCard(
                         mode: .shapes,
-                        tokens: tokenLine(texts: ["●", "▲", "■"], colors: Array(ShapeCard.samples.prefix(3).map(\.color))),
+                        tokens: tokenLine(texts: ["★", "▲", "■"], colors: Array(ShapeCard.samples.prefix(3).map(\.color))),
                         subtitle: "shapes",
                         width: cardWidth,
                         height: cardHeight,
