@@ -105,9 +105,6 @@ struct LetterContentView: View {
     @State private var autoPlayTimer: Timer?
 
     private let alphabet = LetterCard.samples
-    private let letterFontName = "AkzidenzGroteskBE-Md"
-    private let tileFontName = "AkzidenzGroteskBE-Bold"
-    private let wordFontName = "AkzidenzGroteskBE-Bold"
     private let gridDwellTime: TimeInterval = 1.0
     private let detailDwellTime: TimeInterval = 4.0
 
@@ -122,10 +119,7 @@ struct LetterContentView: View {
             if showingGrid {
                 GridView(
                     alphabet: alphabet,
-                    selectedIndex: $selectedIndex,
-                    showingGrid: $showingGrid,
                     focusedTarget: _focusedTarget,
-                    isAutoPlayActive: $isAutoPlayActive,
                     onBackToModeSelection: onBackToModeSelection,
                     onGridMove: handleGridMove,
                     onGridPlayPause: handleGridPlayPause,
@@ -135,7 +129,6 @@ struct LetterContentView: View {
                 DetailView(
                     currentLetter: currentLetter,
                     focusedTarget: _focusedTarget,
-                    onBackToModeSelection: onBackToModeSelection,
                     onDetailMove: handleHeroMove,
                     onDetailPlayPause: handleDetailPlayPause,
                     onExit: handleExitToGrid,
@@ -330,10 +323,7 @@ struct NumberContentView: View {
             if showingGrid {
                 NumberGridView(
                     numbers: numbers,
-                    selectedIndex: $selectedIndex,
-                    showingGrid: $showingGrid,
                     focusedTarget: _focusedTarget,
-                    isAutoPlayActive: $isAutoPlayActive,
                     onBackToModeSelection: onBackToModeSelection,
                     onGridMove: handleGridMove,
                     onGridPlayPause: handleGridPlayPause,
@@ -343,7 +333,6 @@ struct NumberContentView: View {
                 NumberDetailView(
                     currentNumber: currentNumber,
                     focusedTarget: _focusedTarget,
-                    onBackToModeSelection: onBackToModeSelection,
                     onDetailMove: handleHeroMove,
                     onDetailPlayPause: handleDetailPlayPause,
                     onExit: handleExitToGrid,

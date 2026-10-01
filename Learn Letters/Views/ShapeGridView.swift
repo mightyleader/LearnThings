@@ -9,17 +9,13 @@ import SwiftUI
 
 struct ShapeGridView: View {
     let shapes: [ShapeCard]
-    @Binding var selectedIndex: Int
-    @Binding var showingGrid: Bool
     @FocusState var focusedTarget: FocusTarget?
-    @Binding var isAutoPlayActive: Bool
     var onBackToModeSelection: () -> Void
     var onGridMove: (NavigationDirection) -> Void
     var onGridPlayPause: () -> Void
     var onSelectTile: (Int) -> Void
 
     private let columns = 4
-    private let titleFontName = "AkzidenzGroteskBE-Bold"
     private let labelFontName = "AkzidenzGroteskBE-Bold"
     private let focusColor = Color(red: 0.87, green: 0.94, blue: 1.0)
 
@@ -27,11 +23,9 @@ struct ShapeGridView: View {
         GeometryReader { geo in
             let outerTopPadding = geo.size.height * 0.02
             let outerBottomPadding = geo.size.height * 0.02
-            let titleSpacing = 0.0
-            let titleHeight = 0.0
-            let contentHeight = geo.size.height - outerTopPadding - outerBottomPadding - titleHeight - titleSpacing
+            let contentHeight = geo.size.height - outerTopPadding - outerBottomPadding
 
-            VStack(spacing: titleSpacing) {
+            VStack(spacing: 0) {
                 let hPad = AppLayout.gridHorizontalPadding
                 let vPad = AppLayout.gridVerticalPadding * 0.15
                 let gap = AppLayout.gridGap * 1.8

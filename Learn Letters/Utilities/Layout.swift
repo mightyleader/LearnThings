@@ -19,5 +19,4 @@ enum AppLayout {
     static let detailLetterHeightRatio: CGFloat = 0.80
     static let detailWordHeightRatio: CGFloat = 0.15
     static let detailVStackSpacingRatio: CGFloat = 0.03
-    static let detailHStackSpacingRatio: CGFloat = 0.04
 }

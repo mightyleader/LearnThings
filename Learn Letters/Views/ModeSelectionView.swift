@@ -25,8 +25,7 @@ struct ModeSelectionView: View {
         case voice
     }
 
-    private struct Token: Identifiable {
-        let id = UUID()
+    private struct Token {
         let text: String
         let color: Color
     }

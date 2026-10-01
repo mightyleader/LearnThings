@@ -10,7 +10,6 @@ import SwiftUI
 struct NumberDetailView: View {
     let currentNumber: NumberCard
     @FocusState var focusedTarget: FocusTarget?
-    var onBackToModeSelection: () -> Void
     var onDetailMove: (NavigationDirection) -> Void
     var onDetailPlayPause: () -> Void
     var onExit: () -> Void

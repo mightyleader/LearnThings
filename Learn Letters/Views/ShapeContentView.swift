@@ -33,10 +33,7 @@ struct ShapeContentView: View {
             if showingGrid {
                 ShapeGridView(
                     shapes: shapes,
-                    selectedIndex: $selectedIndex,
-                    showingGrid: $showingGrid,
                     focusedTarget: _focusedTarget,
-                    isAutoPlayActive: $isAutoPlayActive,
                     onBackToModeSelection: onBackToModeSelection,
                     onGridMove: handleGridMove,
                     onGridPlayPause: handleGridPlayPause,
@@ -46,7 +43,6 @@ struct ShapeContentView: View {
                 ShapeDetailView(
                     currentShape: currentShape,
                     focusedTarget: _focusedTarget,
-                    onBackToModeSelection: onBackToModeSelection,
                     onDetailMove: handleHeroMove,
                     onDetailPlayPause: handleDetailPlayPause,
                     onExit: handleExitToGrid,

@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "D4EC46232FF3B8E1004BEBA5"
-               BuildableName = "Learn Letters.app"
-               BlueprintName = "Learn Letters"
+               BuildableName = "Learning Things.app"
+               BlueprintName = "Learning Things"
                ReferencedContainer = "container:Learn Letters.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,8 +45,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D4EC46232FF3B8E1004BEBA5"
-            BuildableName = "Learn Letters.app"
-            BlueprintName = "Learn Letters"
+            BuildableName = "Learning Things.app"
+            BlueprintName = "Learning Things"
             ReferencedContainer = "container:Learn Letters.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -62,8 +62,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D4EC46232FF3B8E1004BEBA5"
-            BuildableName = "Learn Letters.app"
-            BlueprintName = "Learn Letters"
+            BuildableName = "Learning Things.app"
+            BlueprintName = "Learning Things"
             ReferencedContainer = "container:Learn Letters.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

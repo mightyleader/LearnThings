@@ -9,10 +9,7 @@ import SwiftUI
 
 struct GridView: View {
     let alphabet: [LetterCard]
-    @Binding var selectedIndex: Int
-    @Binding var showingGrid: Bool
     @FocusState var focusedTarget: FocusTarget?
-    @Binding var isAutoPlayActive: Bool
     var onBackToModeSelection: () -> Void
     var onGridMove: (NavigationDirection) -> Void
     var onGridPlayPause: () -> Void

@@ -127,7 +127,6 @@ final class LetterSpeaker: ObservableObject {
         utterance.voice = preferredVoice
         utterance.rate = Float(letterRate)
         utterance.pitchMultiplier = Float(pitch)
-//        print("Speaking: \(letter.letter)")
 
         synthesizer.speak(utterance)
     }
@@ -140,7 +139,6 @@ final class LetterSpeaker: ObservableObject {
         utterance.rate = Float(letterRate)
         utterance.pitchMultiplier = Float(pitch)
         utterance.postUtteranceDelay = postDelay
-//        print("Speaking: \(letter.letter)")
         
         let utterance2 = AVSpeechUtterance(string: "is for \(letter.word).")
         utterance2.voice = preferredVoice

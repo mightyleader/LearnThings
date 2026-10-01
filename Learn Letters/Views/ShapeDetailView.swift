@@ -10,7 +10,6 @@ import SwiftUI
 struct ShapeDetailView: View {
     let currentShape: ShapeCard
     @FocusState var focusedTarget: FocusTarget?
-    var onBackToModeSelection: () -> Void
     var onDetailMove: (NavigationDirection) -> Void
     var onDetailPlayPause: () -> Void
     var onExit: () -> Void
