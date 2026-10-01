@@ -41,10 +41,18 @@ enum LearningPalette {
         .rhombus: "#FF2200"
     ]
 
+    private static let colourTokens: [ColourKind: String] = [
+        .red: "#EE220C", .orange: "#F27200", .yellow: "#EBC015",
+        .green: "#017100", .blue: "#004D80", .indigo: "#4B0082",
+        .violet: "#9400D3", .pink: "#FF95CA", .grey: "#929292",
+        .black: "#000000", .white: "#FFFFFF"
+    ]
+
     private static let loadedLetterColors = loadLetterColorsFile(named: "LetterColors")
     private static let fallbackLetterColors = makeColorMap(from: fallbackLetterColorTokens)
     private static let fallbackNumberColors = makeColorMap(from: fallbackNumberColorTokens)
     private static let fallbackShapeColors = makeColorMap(from: fallbackShapeColorTokens)
+    private static let colours = makeColorMap(from: colourTokens)
 
     static func color(forLetter letter: String) -> Color {
         let key = letter.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
@@ -57,6 +65,10 @@ enum LearningPalette {
 
     static func color(forShape kind: ShapeKind) -> Color {
         fallbackShapeColors[kind] ?? .primary
+    }
+
+    static func color(forColour kind: ColourKind) -> Color {
+        colours[kind] ?? .primary
     }
 
     static func colorFromString(_ string: String) -> Color? {

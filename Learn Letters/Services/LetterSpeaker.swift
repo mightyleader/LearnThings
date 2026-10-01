@@ -199,6 +199,16 @@ final class LetterSpeaker: ObservableObject {
         synthesizer.speak(utterance)
     }
 
+    func speak(colourFor colour: ColourCard) {
+        synthesizer.stopSpeaking(at: .immediate)
+
+        let utterance = AVSpeechUtterance(string: "\(colour.label).")
+        utterance.voice = preferredVoice
+        utterance.rate = Float(wordRate)
+        utterance.pitchMultiplier = Float(pitch)
+        synthesizer.speak(utterance)
+    }
+
     private func logAvailableVoices() {
         let details = voiceOptions
             .map { "\($0.name) [\($0.subtitle)]" }

@@ -1,0 +1,34 @@
+//
+//  ColourCard.swift
+//  Learn Letters
+//
+
+import SwiftUI
+
+enum ColourKind: String, CaseIterable, Identifiable {
+    case red, orange, yellow, green, blue, indigo, violet, pink, grey, black, white
+
+    var id: String { rawValue }
+    var name: String { rawValue.capitalized }
+
+    var labelColor: Color {
+        switch self {
+        case .red, .orange, .green, .blue, .indigo, .violet, .black:
+            return .white
+        case .yellow, .pink, .grey, .white:
+            return .black
+        }
+    }
+}
+
+struct ColourCard: Identifiable {
+    let kind: ColourKind
+    let color: Color
+
+    var id: String { kind.id }
+    var label: String { kind.name }
+
+    static let samples: [ColourCard] = ColourKind.allCases.map {
+        ColourCard(kind: $0, color: LearningPalette.color(forColour: $0))
+    }
+}

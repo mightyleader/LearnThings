@@ -71,6 +71,14 @@ struct ContentView: View {
                             showModeSelection = true
                         }
                     )
+                } else if selectedMode == .colours {
+                    ColourContentView(
+                        speaker: speaker,
+                        onBackToModeSelection: {
+                            selectedMode = nil
+                            showModeSelection = true
+                        }
+                    )
                 }
             }
         }

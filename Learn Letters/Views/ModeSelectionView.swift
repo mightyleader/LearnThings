@@ -11,6 +11,7 @@ struct ModeSelectionView: View {
     @Binding var selectedMode: AppMode?
     var onOpenVoiceSettings: () -> Void = {}
     @FocusState private var focusedButton: ModeButton?
+    @State private var lastFocusedBottomMode: ModeButton = .shapes
 
     private let buttonFontName = "AkzidenzGroteskBE-Bold"
     private let subtitleFontName = "AkzidenzGroteskBE-Bold"
@@ -20,6 +21,7 @@ struct ModeSelectionView: View {
         case letters
         case numbers
         case shapes
+        case colours
         case voice
     }
 
@@ -31,19 +33,19 @@ struct ModeSelectionView: View {
     
     var body: some View {
         GeometryReader { geo in
-            let cardWidth = geo.size.width * 0.26
-            let cardHeight = geo.size.height * 0.32
+            let cardWidth = geo.size.width * 0.33
+            let cardHeight = geo.size.height * 0.29
             let voiceWidth = geo.size.width * 0.26
             let voiceHeight = geo.size.height * 0.08
-            let topLineSize = geo.size.height * 0.12
-            let subtitleSize = geo.size.height * 0.055
+            let topLineSize = geo.size.height * 0.105
+            let subtitleSize = geo.size.height * 0.052
             let focusBlue = Color(red: 0.87, green: 0.94, blue: 1.0)
             let buttonBase = Color.white
 
-            VStack(spacing: 0) {
-                Spacer(minLength: geo.size.height * 0.18)
+            VStack(spacing: geo.size.height * 0.025) {
+                Spacer(minLength: geo.size.height * 0.035)
 
-                HStack(spacing: geo.size.width * 0.035) {
+                HStack(spacing: geo.size.width * 0.04) {
                     makeModeCard(
                         mode: .letters,
                         tokens: tokenLine(texts: ["A", "B", "C"], colors: Array(LetterCard.samples.prefix(3).map(\.color))),
@@ -63,6 +65,10 @@ struct ModeSelectionView: View {
                         topLineSize: topLineSize,
                         subtitleSize: subtitleSize
                     )
+                }
+                .frame(maxWidth: .infinity)
+
+                HStack(spacing: geo.size.width * 0.04) {
                     makeModeCard(
                         mode: .shapes,
                         tokens: tokenLine(texts: ["★", "▲", "■"], colors: Array(ShapeCard.samples.prefix(3).map(\.color))),
@@ -72,10 +78,19 @@ struct ModeSelectionView: View {
                         topLineSize: topLineSize,
                         subtitleSize: subtitleSize
                     )
+                    makeModeCard(
+                        mode: .colours,
+                        tokens: tokenLine(texts: ["■", "■", "■"], colors: Array(ColourCard.samples.prefix(3).map(\.color))),
+                        subtitle: "colours",
+                        width: cardWidth,
+                        height: cardHeight,
+                        topLineSize: topLineSize,
+                        subtitleSize: subtitleSize
+                    )
                 }
                 .frame(maxWidth: .infinity)
 
-                Spacer(minLength: geo.size.height * 0.14)
+                Spacer(minLength: geo.size.height * 0.035)
 
                 Button(action: onOpenVoiceSettings) {
                     Text("voices")
@@ -92,7 +107,7 @@ struct ModeSelectionView: View {
                 .focused($focusedButton, equals: .voice)
                 .focusEffectDisabled(true)
 
-                Spacer(minLength: geo.size.height * 0.06)
+                Spacer(minLength: geo.size.height * 0.035)
             }
             .frame(width: geo.size.width, height: geo.size.height)
             .background(Color.white)
@@ -108,21 +123,30 @@ struct ModeSelectionView: View {
                 case .left:
                     if focusedButton == .numbers {
                         focusedButton = .letters
-                    } else if focusedButton == .shapes {
-                        focusedButton = .numbers
+                    } else if focusedButton == .colours {
+                        focusedButton = .shapes
                     }
                 case .right:
                     if focusedButton == .letters {
                         focusedButton = .numbers
-                    } else if focusedButton == .numbers {
-                        focusedButton = .shapes
+                    } else if focusedButton == .shapes {
+                        focusedButton = .colours
                     }
                 case .up:
                     if focusedButton == .voice {
+                        focusedButton = lastFocusedBottomMode
+                    } else if focusedButton == .shapes {
+                        focusedButton = .letters
+                    } else if focusedButton == .colours {
                         focusedButton = .numbers
                     }
                 case .down:
-                    if focusedButton == .letters || focusedButton == .numbers || focusedButton == .shapes {
+                    if focusedButton == .letters {
+                        focusedButton = .shapes
+                    } else if focusedButton == .numbers {
+                        focusedButton = .colours
+                    } else if focusedButton == .shapes || focusedButton == .colours {
+                        lastFocusedBottomMode = focusedButton ?? .shapes
                         focusedButton = .voice
                     }
                 default:
@@ -186,6 +210,8 @@ struct ModeSelectionView: View {
             return .numbers
         case .shapes:
             return .shapes
+        case .colours:
+            return .colours
         }
     }
 }
@@ -194,6 +220,7 @@ enum AppMode {
     case letters
     case numbers
     case shapes
+    case colours
 }
 
 #Preview {

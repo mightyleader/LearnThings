@@ -29,6 +29,10 @@
         D4EC4635AFF3B8E3004BEBA5 /* ShapeGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EC46360FF3B8E3004BEBA5 /* ShapeGridView.swift */; };
         D4EC4635BFF3B8E3004BEBA5 /* ShapeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EC46361FF3B8E3004BEBA5 /* ShapeDetailView.swift */; };
         D4EC4635CFF3B8E3004BEBA5 /* ShapeContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EC46362FF3B8E3004BEBA5 /* ShapeContentView.swift */; };
+        D4EC46370FF3B8E3004BEBA5 /* ColourCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EC46374FF3B8E3004BEBA5 /* ColourCard.swift */; };
+        D4EC46371FF3B8E3004BEBA5 /* ColourContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EC46375FF3B8E3004BEBA5 /* ColourContentView.swift */; };
+        D4EC46372FF3B8E3004BEBA5 /* ColourDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EC46376FF3B8E3004BEBA5 /* ColourDetailView.swift */; };
+        D4EC46373FF3B8E3004BEBA5 /* ColourGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EC46377FF3B8E3004BEBA5 /* ColourGridView.swift */; };
         D4EC46330FF3B8E3004BEBA5 /* LetterColors.txt in Resources */ = {isa = PBXBuildFile; fileRef = D4EC46346FF3B8E3004BEBA5 /* LetterColors.txt */; };
         D4EC46331FF3B8E3004BEBA5 /* LetterWords.txt in Resources */ = {isa = PBXBuildFile; fileRef = D4EC46347FF3B8E3004BEBA5 /* LetterWords.txt */; };
         D4EC46332FF3B8E3004BEBA5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D4EC46348FF3B8E3004BEBA5 /* Assets.xcassets */; };
@@ -61,6 +65,10 @@
         D4EC46360FF3B8E3004BEBA5 /* ShapeGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeGridView.swift; sourceTree = "<group>"; };
         D4EC46361FF3B8E3004BEBA5 /* ShapeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeDetailView.swift; sourceTree = "<group>"; };
         D4EC46362FF3B8E3004BEBA5 /* ShapeContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeContentView.swift; sourceTree = "<group>"; };
+        D4EC46374FF3B8E3004BEBA5 /* ColourCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColourCard.swift; sourceTree = "<group>"; };
+        D4EC46375FF3B8E3004BEBA5 /* ColourContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColourContentView.swift; sourceTree = "<group>"; };
+        D4EC46376FF3B8E3004BEBA5 /* ColourDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColourDetailView.swift; sourceTree = "<group>"; };
+        D4EC46377FF3B8E3004BEBA5 /* ColourGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColourGridView.swift; sourceTree = "<group>"; };
         D4EC46346FF3B8E3004BEBA5 /* LetterColors.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LetterColors.txt; sourceTree = "<group>"; };
         D4EC46347FF3B8E3004BEBA5 /* LetterWords.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LetterWords.txt; sourceTree = "<group>"; };
         D4EC46348FF3B8E3004BEBA5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -107,6 +115,7 @@
         D4EC46350FF3B8E3004BEBA5 /* Models */ = {
             isa = PBXGroup;
             children = (
+                D4EC46374FF3B8E3004BEBA5 /* ColourCard.swift */,
                 D4EC46338FF3B8E3004BEBA5 /* FocusTarget.swift */,
                 D4EC46339FF3B8E3004BEBA5 /* LetterCard.swift */,
                 D4EC4633AFF3B8E3004BEBA5 /* NavigationDirection.swift */,
@@ -138,6 +147,9 @@
             isa = PBXGroup;
             children = (
                 D4EC46354FF3B8E3004BEBA5 /* Components */,
+                D4EC46375FF3B8E3004BEBA5 /* ColourContentView.swift */,
+                D4EC46376FF3B8E3004BEBA5 /* ColourDetailView.swift */,
+                D4EC46377FF3B8E3004BEBA5 /* ColourGridView.swift */,
                 D4EC46340FF3B8E3004BEBA5 /* DetailView.swift */,
                 D4EC46341FF3B8E3004BEBA5 /* GridView.swift */,
                 D4EC46342FF3B8E3004BEBA5 /* ModeSelectionView.swift */,
@@ -277,6 +289,10 @@
                 D4EC4635AFF3B8E3004BEBA5 /* ShapeGridView.swift in Sources */,
                 D4EC4635BFF3B8E3004BEBA5 /* ShapeDetailView.swift in Sources */,
                 D4EC4635CFF3B8E3004BEBA5 /* ShapeContentView.swift in Sources */,
+                D4EC46370FF3B8E3004BEBA5 /* ColourCard.swift in Sources */,
+                D4EC46371FF3B8E3004BEBA5 /* ColourContentView.swift in Sources */,
+                D4EC46372FF3B8E3004BEBA5 /* ColourDetailView.swift in Sources */,
+                D4EC46373FF3B8E3004BEBA5 /* ColourGridView.swift in Sources */,
                 D4EC4632FFF3B8E3004BEBA5 /* VoiceSelectionView.swift in Sources */,
             );
             runOnlyForDeploymentPostprocessing = 0;
