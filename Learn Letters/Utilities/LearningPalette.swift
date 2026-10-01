@@ -42,8 +42,8 @@ enum LearningPalette {
     ]
 
     private static let colourTokens: [ColourKind: String] = [
-        .red: "#EE220C", .orange: "#F27200", .yellow: "#EBC015",
-        .green: "#017100", .blue: "#004D80", .indigo: "#4B0082",
+        .red: "#EE220C", .orange: "#FEAE00", .yellow: "#EBC015",
+        .green: "#61D836", .blue: "#1D96F0", .indigo: "#4B0082",
         .violet: "#9400D3", .pink: "#FF95CA", .grey: "#929292",
         .black: "#000000", .white: "#FFFFFF"
     ]
