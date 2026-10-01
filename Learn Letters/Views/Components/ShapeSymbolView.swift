@@ -1,6 +1,6 @@
 //
 //  ShapeSymbolView.swift
-//  Learn Letters
+//  Learn Things
 //
 //  Created by Rob Stearn on 30/09/2026.
 //

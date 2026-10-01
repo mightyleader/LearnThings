@@ -1,6 +1,6 @@
 //
 //  ColourCard.swift
-//  Learn Letters
+//  Learn Things
 //
 
 import SwiftUI

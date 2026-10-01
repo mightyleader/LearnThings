@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D4EC46320FF3B8E3004BEBA5 /* Learn_LettersApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EC46336FF3B8E3004BEBA5 /* Learn_LettersApp.swift */; };
+		D4EC46320FF3B8E3004BEBA5 /* Learn_ThingsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EC46336FF3B8E3004BEBA5 /* Learn_ThingsApp.swift */; };
 		D4EC46321FF3B8E3004BEBA5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EC46337FF3B8E3004BEBA5 /* ContentView.swift */; };
 		D4EC46322FF3B8E3004BEBA5 /* FocusTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EC46338FF3B8E3004BEBA5 /* FocusTarget.swift */; };
 		D4EC46323FF3B8E3004BEBA5 /* LetterCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EC46339FF3B8E3004BEBA5 /* LetterCard.swift */; };
@@ -43,7 +43,7 @@
 
 /* Begin PBXFileReference section */
 		D4EC46242FF3B8E1004BEBA5 /* Learning Things.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Learning Things.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		D4EC46336FF3B8E3004BEBA5 /* Learn_LettersApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Learn_LettersApp.swift; sourceTree = "<group>"; };
+		D4EC46336FF3B8E3004BEBA5 /* Learn_ThingsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Learn_ThingsApp.swift; sourceTree = "<group>"; };
 		D4EC46337FF3B8E3004BEBA5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		D4EC46338FF3B8E3004BEBA5 /* FocusTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusTarget.swift; sourceTree = "<group>"; };
 		D4EC46339FF3B8E3004BEBA5 /* LetterCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterCard.swift; sourceTree = "<group>"; };
@@ -99,7 +99,7 @@
 		D4EC46262FF3B8E1004BEBA5 /* Learn Letters */ = {
 			isa = PBXGroup;
 			children = (
-				D4EC46336FF3B8E3004BEBA5 /* Learn_LettersApp.swift */,
+				D4EC46336FF3B8E3004BEBA5 /* Learn_ThingsApp.swift */,
 				D4EC46337FF3B8E3004BEBA5 /* ContentView.swift */,
 				D4EC46350FF3B8E3004BEBA5 /* Models */,
 				D4EC46351FF3B8E3004BEBA5 /* Services */,
@@ -209,7 +209,7 @@
 			name = "Learning Things";
 			packageProductDependencies = (
 			);
-			productName = "Learn Letters";
+			productName = "Learning Things";
 			productReference = D4EC46242FF3B8E1004BEBA5 /* Learning Things.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -228,7 +228,7 @@
 					};
 				};
 			};
-			buildConfigurationList = D4EC461F2FF3B8E1004BEBA5 /* Build configuration list for PBXProject "Learn Letters" */;
+			buildConfigurationList = D4EC461F2FF3B8E1004BEBA5 /* Build configuration list for PBXProject "Learning Things" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -268,7 +268,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D4EC46320FF3B8E3004BEBA5 /* Learn_LettersApp.swift in Sources */,
+				D4EC46320FF3B8E3004BEBA5 /* Learn_ThingsApp.swift in Sources */,
 				D4EC46321FF3B8E3004BEBA5 /* ContentView.swift in Sources */,
 				D4EC46322FF3B8E3004BEBA5 /* FocusTarget.swift in Sources */,
 				D4EC46323FF3B8E3004BEBA5 /* LetterCard.swift in Sources */,
@@ -508,7 +508,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		D4EC461F2FF3B8E1004BEBA5 /* Build configuration list for PBXProject "Learn Letters" */ = {
+		D4EC461F2FF3B8E1004BEBA5 /* Build configuration list for PBXProject "Learning Things" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D4EC462D2FF3B8E2004BEBA5 /* Debug */,

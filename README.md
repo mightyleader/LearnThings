@@ -1,46 +1,25 @@
-# Learn Letters
+# Learning Things
 
-A simple tvOS SwiftUI app for learning the alphabet.
+Learning Things is a SwiftUI learning app for young children, designed primarily for Apple TV. Explore letters, numbers, shapes and colours with large visuals and spoken names.
 
-## Current features
+## Learning modes
 
-- White minimal letter card with uppercase and lowercase side by side
-- Left and right remote navigation on the featured card
-- Focusable A–Z browser grid
-- Example word for every letter
-- Spoken letter and word using speech synthesis
+- **Letters:** Browse A–Z, see uppercase and lowercase letters with example words, and hear each letter and word.
+- **Numbers:** Explore 0–10 with number words and dots that show their quantities.
+- **Shapes:** Browse familiar geometric shapes in a grid and see each shape with its name in detail.
+- **Colours:** Browse 11 named colours; each detail screen fills with that colour and shows its name in contrasting text.
 
-## Project structure
+The mode selector also has a **Voices** button for previewing and choosing from the voices available on the device. Speech uses `AVSpeechSynthesizer`.
 
-- `Learn Letters/ContentView.swift` — main learning experience
-- `Learn Letters/Learn_LettersApp.swift` — app entry point
+## Apple TV remote
 
-## Running the app
+- Move focus with the directional controls and press **Select** to open a grid item. Select on a detail screen repeats its speech.
+- Press **Left** or **Right** in a detail screen to move through items, wrapping at either end.
+- Press **Play/Pause** to start or stop automatic sequencing in a grid or detail screen.
+- Press **Menu/Back** to return from detail to its grid, then from the grid to the mode selector.
 
-Open the project in Xcode and run the `Learn Letters` scheme on an Apple TV simulator or device.
+## Open the project
 
-## Custom fonts
+Open `Learning Things.xcodeproj` in Xcode and use its shared **Learning Things** scheme to run the app on an Apple TV simulator or device. The project also includes iOS build settings and icons, but the current interface is optimized for tvOS.
 
-The app is set up to use:
-
-- `AkzidenzGroteskBE-Md` for letters
-- `AkzidenzGroteskBE-Light` for example words
-
-Put font files in:
-
-- `Learn Letters/Fonts/`
-
-Then in Xcode:
-
-1. Drag the font files into the `Learn Letters/Fonts/` group.
-2. Check **Copy items if needed**.
-3. Ensure the `Learn Letters` target is selected.
-4. In target settings, add each font file name to **Info > Fonts provided by application**.
-
-If a font is missing or not registered yet, the UI falls back to a system font.
-
-## Interaction
-
-- Move focus to the large letter card and swipe left/right to change letters
-- Browse the alphabet grid to jump directly to a letter
-- Press **Speak** or click the large card to hear the current letter and word
+Source files live in `Learn Letters/`; bundled Akzidenz Grotesk fonts are in `Learn Letters/Fonts/`. The shared learning colours are defined in `Learn Letters/Utilities/LearningPalette.swift`, and icon and Top Shelf artwork is in `Learn Letters/Assets.xcassets/`.

@@ -1,6 +1,6 @@
 //
 //  ColourContentView.swift
-//  Learn Letters
+//  Learn Things
 //
 
 import SwiftUI

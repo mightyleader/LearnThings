@@ -1,6 +1,6 @@
 //
 //  NavigationDirection.swift
-//  Learn Letters
+//  Learn Things
 //
 //  Shared navigation direction used across iOS and tvOS.
 //

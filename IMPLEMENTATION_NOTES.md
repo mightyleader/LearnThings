@@ -82,7 +82,7 @@ Three major features have been successfully implemented:
 ## Task 3: iOS Support with Screen Rotation
 
 ### Project Configuration Changes
-**File**: `Learn Letters.xcodeproj/project.pbxproj`
+**File**: `Learning Things.xcodeproj/project.pbxproj`
 
 - **SDKROOT**: Changed from `appletvos` to `auto` (supports all platforms)
 - **TARGETED_DEVICE_FAMILY**: Changed from `3` (tvOS only) to `1,2,3` (iPhone, iPad, tvOS)

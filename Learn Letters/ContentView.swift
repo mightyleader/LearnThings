@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  Learn Letters
+//  Learn Things
 //
 //  Created by Rob Stearn on 30/06/2026.
 //

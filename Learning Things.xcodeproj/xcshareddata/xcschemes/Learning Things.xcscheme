@@ -17,7 +17,7 @@
                BlueprintIdentifier = "D4EC46232FF3B8E1004BEBA5"
                BuildableName = "Learning Things.app"
                BlueprintName = "Learning Things"
-               ReferencedContainer = "container:Learn Letters.xcodeproj">
+               ReferencedContainer = "container:Learning Things.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -47,7 +47,7 @@
             BlueprintIdentifier = "D4EC46232FF3B8E1004BEBA5"
             BuildableName = "Learning Things.app"
             BlueprintName = "Learning Things"
-            ReferencedContainer = "container:Learn Letters.xcodeproj">
+            ReferencedContainer = "container:Learning Things.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -64,7 +64,7 @@
             BlueprintIdentifier = "D4EC46232FF3B8E1004BEBA5"
             BuildableName = "Learning Things.app"
             BlueprintName = "Learning Things"
-            ReferencedContainer = "container:Learn Letters.xcodeproj">
+            ReferencedContainer = "container:Learning Things.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

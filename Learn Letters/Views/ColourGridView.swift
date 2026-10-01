@@ -1,6 +1,6 @@
 //
 //  ColourGridView.swift
-//  Learn Letters
+//  Learn Things
 //
 
 import SwiftUI
