@@ -98,6 +98,13 @@ struct ContentView: View {
                             showModeSelection = true
                         }
                     )
+                } else if selectedMode == .random {
+                    RandomPromptView(
+                        onBackToModeSelection: {
+                            selectedMode = nil
+                            showModeSelection = true
+                        }
+                    )
                 }
             }
         }

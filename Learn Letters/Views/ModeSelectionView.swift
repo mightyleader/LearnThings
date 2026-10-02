@@ -23,6 +23,7 @@ struct ModeSelectionView: View {
         case numbers
         case shapes
         case colours
+        case random
         case voice
     }
 
@@ -33,16 +34,16 @@ struct ModeSelectionView: View {
     
     var body: some View {
         GeometryReader { geo in
-            let cardWidth = geo.size.width * 0.33
-            let cardHeight = geo.size.height * 0.29
-            let voiceWidth = geo.size.width * 0.26
-            let voiceHeight = geo.size.height * 0.08
-            let topLineSize = geo.size.height * 0.105
-            let subtitleSize = geo.size.height * 0.052
+            let cardWidth = geo.size.width * 0.36
+            let cardHeight = geo.size.height * 0.24
+            let voiceWidth = geo.size.width * 0.30
+            let voiceHeight = geo.size.height * 0.09
+            let topLineSize = cardHeight * 0.40
+            let subtitleSize = cardHeight * 0.20
             let focusBlue = Color(red: 0.87, green: 0.94, blue: 1.0)
             let buttonBase = Color.white
 
-            VStack(spacing: geo.size.height * 0.025) {
+            VStack(spacing: geo.size.height * 0.018) {
                 Spacer(minLength: geo.size.height * 0.035)
 
                 HStack(spacing: geo.size.width * 0.04) {
@@ -90,35 +91,57 @@ struct ModeSelectionView: View {
                 }
                 .frame(maxWidth: .infinity)
 
-                Spacer(minLength: geo.size.height * 0.035)
-
-                Button(action: onOpenVoiceSettings) {
-                    HStack(spacing: geo.size.width * 0.012) {
-                        Text("voices")
-                        if !voicesEnabled {
-                            Text("off")
-                                .font(.custom(buttonFontName, size: geo.size.height * 0.022))
-                                .padding(.horizontal, geo.size.width * 0.02)
-                                .padding(.vertical, geo.size.height * 0.004)
-                                .background(
-                                    Capsule(style: .continuous)
-                                        .fill(Color(red: 0.94, green: 0.64, blue: 0.64))
-                                )
-                                .foregroundStyle(Color(red: 0.32, green: 0.08, blue: 0.08))
-                        }
-                    }
-                    .font(.custom(subtitleFontName, size: geo.size.height * 0.045))
-                    .foregroundStyle(Color(red: 0.18, green: 0.22, blue: 0.32))
-                    .frame(width: voiceWidth, height: voiceHeight)
-                    .background(
-                        RoundedRectangle(cornerRadius: 20, style: .continuous)
-                            .fill(focusedButton == .voice ? focusBlue : buttonBase)
+                HStack {
+                    makeModeCard(
+                        mode: .random,
+                        tokens: tokenLine(
+                            texts: ["A", "7", "★"],
+                            colors: [
+                                LearningPalette.color(forLetter: "A"),
+                                LearningPalette.color(forNumber: 7),
+                                LearningPalette.color(forShape: .star)
+                            ]
+                        ),
+                        subtitle: "random",
+                        width: cardWidth,
+                        height: cardHeight,
+                        topLineSize: topLineSize,
+                        subtitleSize: subtitleSize
                     )
-                    .scaleEffect(focusedButton == .voice ? 1.04 : 1.0)
                 }
-                .buttonStyle(.borderless)
-                .focused($focusedButton, equals: .voice)
-                .focusEffectDisabled(true)
+                .frame(maxWidth: .infinity)
+
+                Spacer(minLength: geo.size.height * 0.02)
+
+                HStack(spacing: geo.size.width * 0.03) {
+                    Button(action: onOpenVoiceSettings) {
+                        HStack(spacing: geo.size.width * 0.012) {
+                            Text("voices")
+                            if !voicesEnabled {
+                                Text("off")
+                                    .font(.custom(buttonFontName, size: geo.size.height * 0.027))
+                                    .padding(.horizontal, geo.size.width * 0.022)
+                                    .padding(.vertical, geo.size.height * 0.006)
+                                    .background(
+                                        Capsule(style: .continuous)
+                                            .fill(Color(red: 0.94, green: 0.64, blue: 0.64))
+                                    )
+                                    .foregroundStyle(Color(red: 0.32, green: 0.08, blue: 0.08))
+                            }
+                        }
+                        .font(.custom(subtitleFontName, size: geo.size.height * 0.05))
+                        .foregroundStyle(Color(red: 0.18, green: 0.22, blue: 0.32))
+                        .frame(width: voiceWidth, height: voiceHeight)
+                        .background(
+                            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                                .fill(focusedButton == .voice ? focusBlue : buttonBase)
+                        )
+                        .scaleEffect(focusedButton == .voice ? 1.04 : 1.0)
+                    }
+                    .buttonStyle(.borderless)
+                    .focused($focusedButton, equals: .voice)
+                    .focusEffectDisabled(true)
+                }
 
                 Spacer(minLength: geo.size.height * 0.035)
             }
@@ -147,6 +170,8 @@ struct ModeSelectionView: View {
                     }
                 case .up:
                     if focusedButton == .voice {
+                        focusedButton = .random
+                    } else if focusedButton == .random {
                         focusedButton = lastFocusedBottomMode
                     } else if focusedButton == .shapes {
                         focusedButton = .letters
@@ -160,6 +185,8 @@ struct ModeSelectionView: View {
                         focusedButton = .colours
                     } else if focusedButton == .shapes || focusedButton == .colours {
                         lastFocusedBottomMode = focusedButton ?? .shapes
+                        focusedButton = .random
+                    } else if focusedButton == .random {
                         focusedButton = .voice
                     }
                 default:
@@ -225,6 +252,8 @@ struct ModeSelectionView: View {
             return .shapes
         case .colours:
             return .colours
+        case .random:
+            return .random
         }
     }
 }
@@ -234,6 +263,7 @@ enum AppMode {
     case numbers
     case shapes
     case colours
+    case random
 }
 
 #Preview {
