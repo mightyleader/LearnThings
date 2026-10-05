@@ -41,6 +41,7 @@ struct ShapeDetailView: View {
             }
             .buttonStyle(.borderless)
             .focused($focusedTarget, equals: .hero)
+            #if os(tvOS)
             .onMoveCommand { direction in
                 switch direction {
                 case .up: onDetailMove(.up)
@@ -52,6 +53,7 @@ struct ShapeDetailView: View {
             }
             .onPlayPauseCommand(perform: onDetailPlayPause)
             .onExitCommand(perform: onExit)
+            #endif
             .onAppear(perform: onSpeak)
         }
     }

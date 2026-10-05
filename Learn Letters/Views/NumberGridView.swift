@@ -77,6 +77,7 @@ struct NumberGridView: View {
             .padding(.horizontal, hPad)
             .padding(.vertical, vPad)
             .environment(\.isFocusEffectEnabled, false)
+            #if os(tvOS)
             .onMoveCommand { direction in
                 switch direction {
                 case .up: onGridMove(.up)
@@ -88,6 +89,7 @@ struct NumberGridView: View {
             }
             .onPlayPauseCommand(perform: onGridPlayPause)
             .onExitCommand(perform: onBackToModeSelection)
+            #endif
         }
         .focusEffectDisabled(true)
     }

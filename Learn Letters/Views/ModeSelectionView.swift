@@ -258,12 +258,34 @@ struct ModeSelectionView: View {
     }
 }
 
-enum AppMode {
+enum AppMode: String, CaseIterable, Identifiable, Hashable {
     case letters
     case numbers
     case shapes
     case colours
     case random
+
+    var id: Self { self }
+
+    var title: String {
+        switch self {
+        case .letters: return "Letters"
+        case .numbers: return "Numbers"
+        case .shapes: return "Shapes"
+        case .colours: return "Colours"
+        case .random: return "Random"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .letters: return "textformat.alt"
+        case .numbers: return "textformat.numbers"
+        case .shapes: return "square.on.circle"
+        case .colours: return "rainbow"
+        case .random: return "shuffle"
+        }
+    }
 }
 
 #Preview {

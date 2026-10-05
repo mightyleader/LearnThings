@@ -65,6 +65,7 @@ struct ColourGridView: View {
             .frame(width: geo.size.width, height: geo.size.height)
             .background(Color.white)
             .environment(\.isFocusEffectEnabled, false)
+            #if os(tvOS)
             .onMoveCommand { direction in
                 switch direction {
                 case .up: onGridMove(.up)
@@ -76,6 +77,7 @@ struct ColourGridView: View {
             }
             .onPlayPauseCommand(perform: onGridPlayPause)
             .onExitCommand(perform: onBackToModeSelection)
+            #endif
         }
         .focusEffectDisabled(true)
     }

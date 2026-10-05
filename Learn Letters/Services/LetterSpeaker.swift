@@ -66,6 +66,14 @@ final class LetterSpeaker: ObservableObject {
     var recommendedVoiceIdentifier: String? {
         Self.bestVoice(from: allVoices)?.identifier
     }
+    
+    var selectedVoiceDisplayName: String {
+        guard let identifier = selectedVoiceIdentifier, 
+              let option = voiceOption(for: identifier) else {
+            return "Default"
+        }
+        return option.name
+    }
 
     private let letterRate = 0.44
     private let wordRate = 0.46

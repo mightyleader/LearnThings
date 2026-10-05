@@ -75,6 +75,7 @@ struct ShapeGridView: View {
             .padding(.bottom, outerBottomPadding)
             .background(Color.white)
             .environment(\.isFocusEffectEnabled, false)
+            #if os(tvOS)
             .onMoveCommand { direction in
                 switch direction {
                 case .up: onGridMove(.up)
@@ -86,6 +87,7 @@ struct ShapeGridView: View {
             }
             .onPlayPauseCommand(perform: onGridPlayPause)
             .onExitCommand(perform: onBackToModeSelection)
+            #endif
         }
         .focusEffectDisabled(true)
     }

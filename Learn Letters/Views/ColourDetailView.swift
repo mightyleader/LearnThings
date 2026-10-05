@@ -28,6 +28,7 @@ struct ColourDetailView: View {
             .buttonStyle(.borderless)
             .focused($focusedTarget, equals: .hero)
             .focusEffectDisabled()
+            #if os(tvOS)
             .onMoveCommand { direction in
                 switch direction {
                 case .up: onDetailMove(.up)
@@ -39,6 +40,7 @@ struct ColourDetailView: View {
             }
             .onPlayPauseCommand(perform: onDetailPlayPause)
             .onExitCommand(perform: onExit)
+            #endif
             .onAppear(perform: onSpeak)
         }
         .background(currentColour.color.ignoresSafeArea())

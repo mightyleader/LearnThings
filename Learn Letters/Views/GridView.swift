@@ -63,6 +63,7 @@ struct GridView: View {
             .padding(.horizontal, hPad)
             .padding(.vertical, vPad)
             .environment(\.isFocusEffectEnabled, false)
+            #if os(tvOS)
             .onMoveCommand { direction in
                 switch direction {
                 case .up: onGridMove(.up)
@@ -74,6 +75,7 @@ struct GridView: View {
             }
             .onPlayPauseCommand(perform: onGridPlayPause)
             .onExitCommand(perform: onBackToModeSelection)
+            #endif
         }
     }
 

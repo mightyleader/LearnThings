@@ -96,6 +96,8 @@ struct VoiceSelectionView: View {
             }
         }
         .navigationTitle("Voice")
+        #if os(tvOS)
         .onExitCommand(perform: onDone)
+        #endif
     }
 }
