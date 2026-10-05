@@ -78,13 +78,15 @@ struct RandomPromptView: View {
     var body: some View {
         GeometryReader { geo in
             let canvasWidth = geo.size.width * 0.84
-            let canvasHeight = geo.size.height * 0.82
             let answerSize = min(geo.size.height * 0.085, geo.size.width * 0.058)
+            let verticalInset = geo.size.height * 0.03
+            let contentSpacing = geo.size.height * 0.04
             let answerHeight = geo.size.height * 0.12
+            let canvasHeight = max(0, geo.size.height - (verticalInset * 2) - (contentSpacing * 3) - answerHeight)
 
             Button(action: handlePrimaryAction) {
-                VStack(spacing: geo.size.height * 0.04) {
-                    Spacer(minLength: geo.size.height * 0.03)
+                VStack(spacing: contentSpacing) {
+                    Spacer(minLength: verticalInset)
 
                     promptSymbol(in: CGSize(width: canvasWidth, height: canvasHeight))
                     .frame(width: canvasWidth, height: canvasHeight)
@@ -99,12 +101,14 @@ struct RandomPromptView: View {
                         .frame(height: answerHeight)
                         .opacity(isAnswerVisible ? 1 : 0)
 
-                    Spacer(minLength: geo.size.height * 0.03)
+                    Spacer(minLength: verticalInset)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+            .frame(width: geo.size.width, height: geo.size.height)
+            .focusEffectDisabled()
             .focused($isPromptFocused)
             .onAppear {
                 isPromptFocused = true
@@ -114,7 +118,7 @@ struct RandomPromptView: View {
             .onExitCommand(perform: onBackToModeSelection)
             #endif
         }
-        .background(Color.white.ignoresSafeArea())
+//////        .background(Color.white.ignoresSafeArea())
         .environment(\.isFocusEffectEnabled, false)
     }
 
