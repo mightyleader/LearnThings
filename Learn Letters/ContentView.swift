@@ -567,6 +567,7 @@ private struct IPadLearningView: View {
     @ObservedObject var speaker: LetterSpeaker
     @Binding var selectedVoiceIdentifier: String
     @Binding var voicesEnabled: Bool
+    @Environment(\.colorScheme) private var colorScheme
 
     @State private var columnVisibility: NavigationSplitViewVisibility = .doubleColumn
     @State private var selectedMode: AppMode?
@@ -588,6 +589,7 @@ private struct IPadLearningView: View {
                             Label(mode.title, systemImage: mode.systemImage)
                                 .font(.custom(fontName, size: 17))
                         }
+                        .listRowBackground(selectedRowBackground(isSelected: selection == sidebarSelection(for: mode)))
                     }
                 }
 
@@ -600,6 +602,7 @@ private struct IPadLearningView: View {
                                     Text("\(card.uppercaseLetter)  ·  \(card.word)")
                                         .font(.custom(fontName, size: 16))
                                 }
+                                .listRowBackground(selectedRowBackground(isSelected: selection == .letter(card.letter)))
                             }
                         case .numbers:
                             ForEach(NumberCard.samples) { card in
@@ -607,6 +610,7 @@ private struct IPadLearningView: View {
                                     Text("\(card.displayNumber)  ·  \(card.word)")
                                         .font(.custom(fontName, size: 16))
                                 }
+                                .listRowBackground(selectedRowBackground(isSelected: selection == .number(card.number)))
                             }
                         case .shapes:
                             ForEach(ShapeCard.samples) { card in
@@ -618,6 +622,7 @@ private struct IPadLearningView: View {
                                         shapeSidebarIcon(for: card)
                                     }
                                 }
+                                .listRowBackground(selectedRowBackground(isSelected: selection == .shape(card.kind)))
                             }
                         case .colours:
                             ForEach(ColourCard.samples) { card in
@@ -630,6 +635,7 @@ private struct IPadLearningView: View {
                                             .foregroundStyle(card.color)
                                     }
                                 }
+                                .listRowBackground(selectedRowBackground(isSelected: selection == .colour(card.kind)))
                             }
                         case .random:
                             EmptyView()
@@ -651,10 +657,12 @@ private struct IPadLearningView: View {
                             }
                         }
                     }
+                    .listRowBackground(selectedRowBackground(isSelected: selection == .voices))
                 }
             }
             .scrollContentBackground(.hidden)
             .background(Color(uiColor: .systemGroupedBackground))
+            .tint(.accentColor)
             .navigationTitle("Learn Things")
         } detail: {
             NavigationStack {
@@ -870,6 +878,16 @@ private struct IPadLearningView: View {
             return CGSize(width: 15, height: 15)
         default:
             return CGSize(width: 16, height: 16)
+        }
+    }
+
+    @ViewBuilder
+    private func selectedRowBackground(isSelected: Bool) -> some View {
+        if isSelected {
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(Color.accentColor.opacity(colorScheme == .dark ? 0.38 : 0.18))
+        } else {
+            Color.clear
         }
     }
 }
