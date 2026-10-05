@@ -93,7 +93,7 @@ struct RandomPromptView: View {
 
                     Text(prompt.answerText)
                         .font(.custom(fontName, size: answerSize))
-                        .foregroundStyle(.black)
+                        .foregroundStyle(.primary)
                         .multilineTextAlignment(.center)
                         .minimumScaleFactor(0.5)
                         .lineLimit(2)

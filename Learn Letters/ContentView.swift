@@ -976,7 +976,16 @@ private struct IPadNumberDetailView: View {
 
     private func dotsForNumber(_ number: Int) -> some View {
         if number == 0 {
-            return AnyView(EmptyView())
+            return AnyView(
+                HStack(spacing: 12) {
+                    ForEach(0..<5, id: \.self) { _ in
+                        Circle()
+                            .fill(Color.clear)
+                            .frame(width: 30, height: 30)
+                    }
+                }
+                .opacity(0)
+            )
         }
 
         let dotsPerRow: Int
