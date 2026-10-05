@@ -935,17 +935,10 @@ private struct IPadLetterDetailView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding(32)
+            .contentShape(Rectangle())
         }
-        .gesture(
-            DragGesture()
-                .onEnded { gesture in
-                    if gesture.translation.width < -50 {
-                        onSwipeLeft()
-                    } else if gesture.translation.width > 50 {
-                        onSwipeRight()
-                    }
-                }
-        )
+        .contentShape(Rectangle())
+        .highPriorityGesture(swipeGesture(onSwipeLeft: onSwipeLeft, onSwipeRight: onSwipeRight))
     }
 }
 
@@ -979,17 +972,10 @@ private struct IPadNumberDetailView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding(32)
+            .contentShape(Rectangle())
         }
-        .gesture(
-            DragGesture()
-                .onEnded { gesture in
-                    if gesture.translation.width < -50 {
-                        onSwipeLeft()
-                    } else if gesture.translation.width > 50 {
-                        onSwipeRight()
-                    }
-                }
-        )
+        .contentShape(Rectangle())
+        .highPriorityGesture(swipeGesture(onSwipeLeft: onSwipeLeft, onSwipeRight: onSwipeRight))
     }
 
     private func dotsForNumber(_ number: Int) -> some View {
@@ -1060,17 +1046,10 @@ private struct IPadShapeDetailView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding(32)
+            .contentShape(Rectangle())
         }
-        .gesture(
-            DragGesture()
-                .onEnded { gesture in
-                    if gesture.translation.width < -50 {
-                        onSwipeLeft()
-                    } else if gesture.translation.width > 50 {
-                        onSwipeRight()
-                    }
-                }
-        )
+        .contentShape(Rectangle())
+        .highPriorityGesture(swipeGesture(onSwipeLeft: onSwipeLeft, onSwipeRight: onSwipeRight))
     }
 
     private func shapeSymbolSize(maxSize: CGFloat) -> CGSize {
@@ -1113,17 +1092,25 @@ private struct IPadColourDetailView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .gesture(
-            DragGesture()
-                .onEnded { gesture in
-                    if gesture.translation.width < -50 {
-                        onSwipeLeft()
-                    } else if gesture.translation.width > 50 {
-                        onSwipeRight()
-                    }
-                }
-        )
+        .contentShape(Rectangle())
+        .highPriorityGesture(swipeGesture(onSwipeLeft: onSwipeLeft, onSwipeRight: onSwipeRight))
     }
+}
+
+private func swipeGesture(onSwipeLeft: @escaping () -> Void, onSwipeRight: @escaping () -> Void) -> some Gesture {
+    DragGesture(minimumDistance: 24)
+        .onEnded { gesture in
+            let horizontal = gesture.translation.width
+            let vertical = gesture.translation.height
+
+            guard abs(horizontal) > abs(vertical), abs(horizontal) > 40 else { return }
+
+            if horizontal < 0 {
+                onSwipeLeft()
+            } else {
+                onSwipeRight()
+            }
+        }
 }
 
 #endif
