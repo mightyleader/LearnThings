@@ -15,8 +15,6 @@ struct ShapeDetailView: View {
     var onExit: () -> Void
     var onSpeak: () -> Void
 
-    private let wordFontName = "AkzidenzGroteskBE-Bold"
-
     var body: some View {
         GeometryReader { geo in
             let topInset = geo.size.height * 0.06
@@ -24,23 +22,37 @@ struct ShapeDetailView: View {
             let wordSize = geo.size.height * 0.14
             let symbolSize = symbolFrame(for: currentShape.kind, in: geo.size)
 
-            Button(action: onSpeak) {
-                ShapeSymbolView(kind: currentShape.kind, color: currentShape.color)
-                    .frame(width: symbolSize.width, height: symbolSize.height)
-                    .padding(.top, topInset)
-                    .frame(width: geo.size.width, height: geo.size.height, alignment: .top)
-                    .overlay(alignment: .bottom) {
-                        Text(currentShape.label)
-                            .font(.custom(wordFontName, size: wordSize))
-                            .foregroundStyle(.black)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.8)
-                            .padding(.horizontal, geo.size.width * 0.05)
-                            .padding(.bottom, bottomInset)
+            ZStack {
+                Color.white.ignoresSafeArea()
+
+                Button(action: onSpeak) {
+                    ShapeSymbolView(kind: currentShape.kind, color: currentShape.color)
+                        .frame(width: symbolSize.width, height: symbolSize.height)
+                        .padding(.top, topInset)
+                        .frame(width: geo.size.width, height: geo.size.height, alignment: .top)
+                        .overlay(alignment: .bottom) {
+                            Text(currentShape.label)
+                                .font(.system(size: wordSize, weight: .bold, design: .default))
+                                .foregroundStyle(.black)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
+                                .padding(.horizontal, geo.size.width * 0.05)
+                                .padding(.bottom, bottomInset)
+                        }
+                }
+                .buttonStyle(.borderless)
+                .focused($focusedTarget, equals: .hero)
+                .contentShape(Rectangle())
+                .onTapGesture { location in
+                    if location.x < geo.size.width * 0.3 {
+                        onDetailMove(.left)
+                    } else if location.x > geo.size.width * 0.7 {
+                        onDetailMove(.right)
+                    } else {
+                        onSpeak()
                     }
+                }
             }
-            .buttonStyle(.borderless)
-            .focused($focusedTarget, equals: .hero)
             #if os(tvOS)
             .onMoveCommand { direction in
                 switch direction {

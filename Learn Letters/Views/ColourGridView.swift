@@ -45,7 +45,7 @@ struct ColourGridView: View {
                                 .frame(width: squareSide, height: squareSide)
 
                             Text(item.label)
-                                .font(.custom("AkzidenzGroteskBE-Bold", size: labelSize))
+                                .font(.system(size: labelSize, weight: .semibold, design: .default))
                                 .foregroundStyle(.black)
                                 .lineLimit(1)
                         }

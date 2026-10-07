@@ -1,6 +1,6 @@
 # Learning Things
 
-Learning Things is a SwiftUI learning app for young children on iPad and Apple TV. It presents big, simple visuals, spoken prompts, and touch or remote-friendly navigation for early learning.
+Learning Things is a SwiftUI learning app for young children across Apple TV, iPhone, and iPad. It presents big, simple visuals, spoken prompts, and touch or remote-friendly navigation for early learning.
 
 The app currently includes:
 
@@ -68,6 +68,12 @@ The tvOS experience is designed for the Siri Remote / Apple TV Remote.
 - Press **Play/Pause** to start or stop auto-play.
 - Press **Menu/Back** to return from detail to grid, then back to the mode selector.
 
+### iPhone
+
+- Uses the mode-selection flow and grid/detail navigation.
+- Layout adapts to portrait and landscape.
+- Touch is the primary interaction model.
+
 ### iPad
 
 - Uses a dedicated split-view learning interface.
@@ -88,10 +94,8 @@ Auto-play stops when the user manually navigates or switches views.
 ## Data and assets
 
 - Letter words are loaded from `Learn Letters/LetterWords.txt` with fallback data in code.
-- Custom fonts are bundled in `Learn Letters/Fonts/`.
 - Colours are centralized in `Learn Letters/Utilities/LearningPalette.swift`.
 - App icons and platform artwork live in `Learn Letters/Assets.xcassets/`.
-- The `Posters/` folder contains the original source posters I made; they inspired the matching app.
 
 ## Project structure
 
@@ -124,22 +128,22 @@ Important files:
 ## Requirements
 
 - Xcode with SwiftUI support
-- Apple platform SDKs for iPadOS and tvOS
+- Apple platform SDKs for iOS and tvOS
 
-The app supports:
+The project is configured for:
 
-- **iPadOS:** 26+
-- **tvOS:** 27+
+- **iOS:** 18.0+
+- **tvOS:** 26.5+
 
 ## Running the project
 
 1. Open `Learning Things.xcodeproj` in Xcode.
 2. Select the shared **Learning Things** scheme.
-3. Choose an iPad or Apple TV simulator/device.
+3. Choose an iPhone, iPad, or Apple TV simulator/device.
 4. Build and run.
 
 ## Notes
 
-- The app uses bundled Akzidenz Grotesk fonts for its primary visual style.
+- The app uses Apple's SF Display system font for consistent typography across all platforms.
 - Voice availability depends on what is installed on the device.
 - Some UI behaviour differs intentionally between tvOS and iPad to fit each platform better.

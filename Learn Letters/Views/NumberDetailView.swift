@@ -14,9 +14,6 @@ struct NumberDetailView: View {
     var onDetailPlayPause: () -> Void
     var onExit: () -> Void
     var onSpeak: () -> Void
-
-    private let numberFontName = "AkzidenzGroteskBE-Bold"
-    private let wordFontName = "AkzidenzGroteskBE-Bold"
     private let numberHeightRatio: CGFloat = 0.50
     private let wordHeightRatio: CGFloat = 0.15
     private let vStackSpacingRatio: CGFloat = 0.05
@@ -28,26 +25,40 @@ struct NumberDetailView: View {
             let wordSize   = geo.size.height * wordHeightRatio
             let topInset   = geo.size.height * 0.08
 
-            Button(action: onSpeak) {
-                VStack(alignment: .center, spacing: geo.size.height * vStackSpacingRatio) {
-                    Text(currentNumber.displayNumber)
-                        .font(.custom(numberFontName, size: numberSize))
-                        .foregroundStyle(currentNumber.color)
-                        .padding()
+            ZStack {
+                Color.white.ignoresSafeArea()
+                
+                Button(action: onSpeak) {
+                    VStack(alignment: .center, spacing: geo.size.height * vStackSpacingRatio) {
+                        Text(currentNumber.displayNumber)
+                            .font(.system(size: numberSize, weight: .bold, design: .default))
+                            .foregroundStyle(currentNumber.color)
+                            .padding()
 
-                    Text(currentNumber.word)
-                        .font(.custom(wordFontName, size: wordSize))
-                        .foregroundStyle(.black)
-                    
-                    dotsForNumber(currentNumber.number)
-                        .frame(height: dotsAreaHeight, alignment: .top)
-                    Spacer()
+                        Text(currentNumber.word)
+                            .font(.system(size: wordSize, weight: .bold, design: .default))
+                            .foregroundStyle(.black)
+                        
+                        dotsForNumber(currentNumber.number)
+                            .frame(height: dotsAreaHeight, alignment: .top)
+                        Spacer()
+                    }
+                    .padding(.top, topInset)
+                    .frame(width: geo.size.width, height: geo.size.height, alignment: .top)
                 }
-                .padding(.top, topInset)
-                .frame(width: geo.size.width, height: geo.size.height, alignment: .top)
+                .buttonStyle(.borderless)
+                .focused($focusedTarget, equals: .hero)
+                .contentShape(Rectangle())
+                .onTapGesture { location in
+                    if location.x < geo.size.width * 0.3 {
+                        onDetailMove(.left)
+                    } else if location.x > geo.size.width * 0.7 {
+                        onDetailMove(.right)
+                    } else {
+                        onSpeak()
+                    }
+                }
             }
-            .buttonStyle(.borderless)
-            .focused($focusedTarget, equals: .hero)
             #if os(tvOS)
             .onMoveCommand { direction in
                 switch direction {

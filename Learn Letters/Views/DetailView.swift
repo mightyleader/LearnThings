@@ -15,36 +15,47 @@ struct DetailView: View {
     var onExit: () -> Void
     var onSpeak: () -> Void
 
-    private let tileFontName = "AkzidenzGroteskBE-Bold"
-    private let wordFontName = "AkzidenzGroteskBE-Bold"
-
     var body: some View {
         GeometryReader { geo in
             let letterSize = geo.size.height * AppLayout.detailLetterHeightRatio
             let wordSize   = geo.size.height * AppLayout.detailWordHeightRatio
 
-            Button(action: onSpeak) {
-                VStack(spacing: geo.size.height * AppLayout.detailVStackSpacingRatio) {
-                    LetterPairLabel(
-                        uppercase: currentLetter.uppercaseLetter,
-                        lowercase: currentLetter.lowercaseLetter,
-                        separator: " ",
-                        uppercaseColor: currentLetter.color,
-                        lowercaseColor: currentLetter.color.opacity(0.35),
-                        font: .custom(tileFontName, size: letterSize),
-                        minimumScaleFactor: 0.4,
-                        horizontalInset: max(4, letterSize * 0.08)
-                    )
-                    .padding()
+            ZStack {
+                Color.white.ignoresSafeArea()
+                
+                Button(action: onSpeak) {
+                    VStack(spacing: geo.size.height * AppLayout.detailVStackSpacingRatio) {
+                        LetterPairLabel(
+                            uppercase: currentLetter.uppercaseLetter,
+                            lowercase: currentLetter.lowercaseLetter,
+                            separator: " ",
+                            uppercaseColor: currentLetter.color,
+                            lowercaseColor: currentLetter.color.opacity(0.35),
+                            font: .system(size: letterSize, weight: .bold, design: .default),
+                            minimumScaleFactor: 0.4,
+                            horizontalInset: max(4, letterSize * 0.08)
+                        )
+                        .padding()
 
-                    Text(currentLetter.word)
-                        .font(.custom(wordFontName, size: wordSize))
-                        .foregroundStyle(.black)
+                        Text(currentLetter.word)
+                            .font(.system(size: wordSize, weight: .bold, design: .default))
+                            .foregroundStyle(.black)
+                    }
+                    .frame(width: geo.size.width, height: geo.size.height)
                 }
-                .frame(width: geo.size.width, height: geo.size.height)
+                .buttonStyle(.borderless)
+                .focused($focusedTarget, equals: .hero)
+                .contentShape(Rectangle())
+                .onTapGesture { location in
+                    if location.x < geo.size.width * 0.3 {
+                        onDetailMove(.left)
+                    } else if location.x > geo.size.width * 0.7 {
+                        onDetailMove(.right)
+                    } else {
+                        onSpeak()
+                    }
+                }
             }
-            .buttonStyle(.borderless)
-            .focused($focusedTarget, equals: .hero)
             #if os(tvOS)
             .onMoveCommand { direction in
                 switch direction {

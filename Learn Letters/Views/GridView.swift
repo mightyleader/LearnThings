@@ -15,8 +15,6 @@ struct GridView: View {
     var onGridPlayPause: () -> Void
     var onSelectTile: (Int) -> Void
 
-    private let tileFontName = "AkzidenzGroteskBE-Bold"
-
     var body: some View {
         GeometryReader { geo in
             let hPad = AppLayout.gridHorizontalPadding
@@ -45,7 +43,7 @@ struct GridView: View {
                             separator: "",
                             uppercaseColor: item.color,
                             lowercaseColor: item.color.opacity(0.35),
-                            font: .custom(tileFontName, size: fontSize),
+                            font: .system(size: fontSize, weight: .bold, design: .default),
                             minimumScaleFactor: 0.8,
                             horizontalInset: max(2, fontSize * 0.08)
                         )

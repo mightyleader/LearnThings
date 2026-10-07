@@ -14,8 +14,6 @@ struct ModeSelectionView: View {
     @FocusState private var focusedButton: ModeButton?
     @State private var lastFocusedBottomMode: ModeButton = .shapes
 
-    private let buttonFontName = "AkzidenzGroteskBE-Bold"
-    private let subtitleFontName = "AkzidenzGroteskBE-Bold"
     private let cardCornerRadius: CGFloat = 18
 
     enum ModeButton {
@@ -119,7 +117,7 @@ struct ModeSelectionView: View {
                             Text("voices")
                             if !voicesEnabled {
                                 Text("off")
-                                    .font(.custom(buttonFontName, size: geo.size.height * 0.027))
+                                    .font(.system(size: geo.size.height * 0.027, weight: .semibold, design: .default))
                                     .padding(.horizontal, geo.size.width * 0.022)
                                     .padding(.vertical, geo.size.height * 0.006)
                                     .background(
@@ -129,7 +127,7 @@ struct ModeSelectionView: View {
                                     .foregroundStyle(Color(red: 0.32, green: 0.08, blue: 0.08))
                             }
                         }
-                        .font(.custom(subtitleFontName, size: geo.size.height * 0.05))
+                        .font(.system(size: geo.size.height * 0.05, weight: .semibold, design: .default))
                         .foregroundStyle(Color(red: 0.18, green: 0.22, blue: 0.32))
                         .frame(width: voiceWidth, height: voiceHeight)
                         .background(
@@ -218,14 +216,14 @@ struct ModeSelectionView: View {
                 HStack(spacing: 0) {
                     ForEach(Array(tokens.enumerated()), id: \.offset) { index, token in
                         Text(token.text)
-                            .font(.custom(buttonFontName, size: topLineSize))
+                            .font(.system(size: topLineSize, weight: .bold, design: .default))
                             .foregroundStyle(token.color)
                             .tracking(index == tokens.count - 1 ? 0 : -2)
                     }
                 }
 
                 Text(subtitle)
-                    .font(.custom(subtitleFontName, size: subtitleSize))
+                    .font(.system(size: subtitleSize, weight: .semibold, design: .default))
                     .foregroundStyle(.black)
                     .textCase(.lowercase)
             }

@@ -14,8 +14,6 @@ struct NumberGridView: View {
     var onGridMove: (NavigationDirection) -> Void
     var onGridPlayPause: () -> Void
     var onSelectTile: (Int) -> Void
-
-    private let numberFontName = "AkzidenzGroteskBE-Bold"
     private let finalTileExtraWidthFactor: CGFloat = 0.5
 
     private var rowSlices: [ArraySlice<NumberCard>] {
@@ -57,7 +55,7 @@ struct NumberGridView: View {
                                 onSelectTile(globalIndex)
                             } label: {
                                 Text(item.displayNumber)
-                                    .font(.custom(numberFontName, size: fontSize))
+                                    .font(.system(size: fontSize, weight: .bold, design: .default))
                                     .foregroundStyle(item.color)
                                     .tracking(item.number == 10 ? -1 : 0)
                                     .frame(width: tileWidth, height: cellHeight, alignment: .center)

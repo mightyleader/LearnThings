@@ -578,8 +578,6 @@ private struct IPadLearningView: View {
     @State private var currentShapeIndex: Int = 0
     @State private var currentColourIndex: Int = 0
 
-    private let fontName = "AkzidenzGroteskBE-Bold"
-
     var body: some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
             List(selection: $selection) {
@@ -587,7 +585,7 @@ private struct IPadLearningView: View {
                     ForEach(AppMode.allCases) { mode in
                         NavigationLink(value: sidebarSelection(for: mode)) {
                             Label(mode.title, systemImage: mode.systemImage)
-                                .font(.custom(fontName, size: 17))
+                                .font(.system(size: 17, weight: .semibold, design: .default))
                         }
                         .listRowBackground(selectedRowBackground(isSelected: selection == sidebarSelection(for: mode)))
                     }
@@ -600,7 +598,7 @@ private struct IPadLearningView: View {
                             ForEach(LetterCard.samples) { card in
                                 NavigationLink(value: IPadSidebarSelection.letter(card.letter)) {
                                     Text("\(card.uppercaseLetter)  ·  \(card.word)")
-                                        .font(.custom(fontName, size: 16))
+                                        .font(.system(size: 16, weight: .semibold, design: .default))
                                 }
                                 .listRowBackground(selectedRowBackground(isSelected: selection == .letter(card.letter)))
                             }
@@ -608,7 +606,7 @@ private struct IPadLearningView: View {
                             ForEach(NumberCard.samples) { card in
                                 NavigationLink(value: IPadSidebarSelection.number(card.number)) {
                                     Text("\(card.displayNumber)  ·  \(card.word)")
-                                        .font(.custom(fontName, size: 16))
+                                        .font(.system(size: 16, weight: .semibold, design: .default))
                                 }
                                 .listRowBackground(selectedRowBackground(isSelected: selection == .number(card.number)))
                             }
@@ -617,7 +615,7 @@ private struct IPadLearningView: View {
                                 NavigationLink(value: IPadSidebarSelection.shape(card.kind)) {
                                     Label {
                                         Text(card.label)
-                                            .font(.custom(fontName, size: 16))
+                                            .font(.system(size: 16, weight: .semibold, design: .default))
                                     } icon: {
                                         shapeSidebarIcon(for: card)
                                     }
@@ -629,7 +627,7 @@ private struct IPadLearningView: View {
                                 NavigationLink(value: IPadSidebarSelection.colour(card.kind)) {
                                     Label {
                                         Text(card.label)
-                                            .font(.custom(fontName, size: 16))
+                                            .font(.system(size: 16, weight: .semibold, design: .default))
                                     } icon: {
                                         Image(systemName: "square.fill")
                                             .foregroundStyle(card.color)
@@ -647,11 +645,11 @@ private struct IPadLearningView: View {
                     NavigationLink(value: IPadSidebarSelection.voices) {
                         VStack(alignment: .leading, spacing: 10) {
                             Label("Voices", systemImage: voicesEnabled ? "speaker.wave.2" : "speaker.slash")
-                                .font(.custom(fontName, size: 17))
+                                .font(.system(size: 17, weight: .semibold, design: .default))
                             
                             if voicesEnabled && !selectedVoiceIdentifier.isEmpty {
                                 Text(speaker.selectedVoiceDisplayName)
-                                    .font(.custom(fontName, size: 13))
+                                    .font(.system(size: 13, weight: .regular, design: .default))
                                     .foregroundStyle(.secondary)
                                     .padding(.leading, 28)
                             }
@@ -758,8 +756,7 @@ private struct IPadLearningView: View {
             }
         case .mode, nil:
             IPadPlaceholderView(
-                title: placeholderLabel,
-                fontName: fontName
+                title: placeholderLabel
             )
         }
     }
@@ -894,7 +891,6 @@ private struct IPadLearningView: View {
 
 private struct IPadPlaceholderView: View {
     let title: String
-    let fontName: String
 
     var body: some View {
         ContentUnavailableView {
@@ -910,26 +906,24 @@ private struct IPadLetterDetailView: View {
     let onSwipeLeft: () -> Void
     let onSwipeRight: () -> Void
 
-    private let fontName = "AkzidenzGroteskBE-Bold"
-
     var body: some View {
         GeometryReader { geometry in
             let symbolSize = min(geometry.size.width * 0.40, geometry.size.height * 0.42)
 
             VStack(spacing: 28) {
                 Text(card.uppercaseLetter)
-                    .font(.custom(fontName, size: symbolSize))
+                    .font(.system(size: symbolSize, weight: .bold, design: .default))
                     .foregroundStyle(card.color)
                     .minimumScaleFactor(0.5)
                     .lineLimit(1)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
 
                 Text(card.word)
-                    .font(.custom(fontName, size: min(geometry.size.height * 0.08, 56)))
+                    .font(.system(size: min(geometry.size.height * 0.08, 56), weight: .bold, design: .default))
                     .foregroundStyle(.primary)
 
                 Text("\(card.uppercaseLetter)  ·  \(card.lowercaseLetter)")
-                    .font(.custom(fontName, size: min(geometry.size.height * 0.045, 32)))
+                    .font(.system(size: min(geometry.size.height * 0.045, 32), weight: .semibold, design: .default))
                     .foregroundStyle(.secondary)
                     .padding(.bottom, 24)
             }
@@ -947,7 +941,6 @@ private struct IPadNumberDetailView: View {
     let onSwipeLeft: () -> Void
     let onSwipeRight: () -> Void
 
-    private let fontName = "AkzidenzGroteskBE-Bold"
     private let dotsAreaHeight: CGFloat = 180
 
     var body: some View {
@@ -956,14 +949,14 @@ private struct IPadNumberDetailView: View {
 
             VStack(spacing: 28) {
                 Text(card.displayNumber)
-                    .font(.custom(fontName, size: symbolSize))
+                    .font(.system(size: symbolSize, weight: .bold, design: .default))
                     .foregroundStyle(card.color)
                     .minimumScaleFactor(0.5)
                     .lineLimit(1)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
 
                 Text(card.word)
-                    .font(.custom(fontName, size: min(geometry.size.height * 0.08, 56)))
+                    .font(.system(size: min(geometry.size.height * 0.08, 56), weight: .bold, design: .default))
                     .foregroundStyle(.primary)
 
                 dotsForNumber(card.number)
@@ -1027,8 +1020,6 @@ private struct IPadShapeDetailView: View {
     let onSwipeLeft: () -> Void
     let onSwipeRight: () -> Void
 
-    private let fontName = "AkzidenzGroteskBE-Bold"
-
     var body: some View {
         GeometryReader { geometry in
             let maxSize = min(geometry.size.width * 0.44, geometry.size.height * 0.48)
@@ -1040,7 +1031,7 @@ private struct IPadShapeDetailView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
 
                 Text(card.label)
-                    .font(.custom(fontName, size: min(geometry.size.height * 0.08, 56)))
+                    .font(.system(size: min(geometry.size.height * 0.08, 56), weight: .bold, design: .default))
                     .foregroundStyle(.primary)
                     .padding(.bottom, 24)
             }
@@ -1075,15 +1066,13 @@ private struct IPadColourDetailView: View {
     let onSwipeLeft: () -> Void
     let onSwipeRight: () -> Void
 
-    private let fontName = "AkzidenzGroteskBE-Bold"
-
     var body: some View {
         ZStack {
             card.color.ignoresSafeArea()
 
             GeometryReader { geometry in
                 Text(card.label)
-                    .font(.custom(fontName, size: min(geometry.size.height * 0.21, geometry.size.width * 0.18)))
+                    .font(.system(size: min(geometry.size.height * 0.21, geometry.size.width * 0.18), weight: .bold, design: .default))
                     .foregroundStyle(card.kind.labelColor)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)

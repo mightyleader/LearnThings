@@ -73,8 +73,6 @@ struct RandomPromptView: View {
     @State private var isAnswerVisible = false
     @FocusState private var isPromptFocused: Bool
 
-    private let fontName = "AkzidenzGroteskBE-Bold"
-
     var body: some View {
         GeometryReader { geo in
             let canvasWidth = geo.size.width * 0.84
@@ -84,32 +82,40 @@ struct RandomPromptView: View {
             let answerHeight = geo.size.height * 0.12
             let canvasHeight = max(0, geo.size.height - (verticalInset * 2) - (contentSpacing * 3) - answerHeight)
 
-            Button(action: handlePrimaryAction) {
-                VStack(spacing: contentSpacing) {
-                    Spacer(minLength: verticalInset)
+            ZStack {
+                Color.white.ignoresSafeArea()
+                
+                Button(action: handlePrimaryAction) {
+                    VStack(spacing: contentSpacing) {
+                        Spacer(minLength: verticalInset)
 
-                    promptSymbol(in: CGSize(width: canvasWidth, height: canvasHeight))
-                    .frame(width: canvasWidth, height: canvasHeight)
+                        promptSymbol(in: CGSize(width: canvasWidth, height: canvasHeight))
+                        .frame(width: canvasWidth, height: canvasHeight)
 
-                    Text(prompt.answerText)
-                        .font(.custom(fontName, size: answerSize))
-                        .foregroundStyle(.primary)
-                        .multilineTextAlignment(.center)
-                        .minimumScaleFactor(0.5)
-                        .lineLimit(2)
-                        .padding(.horizontal, geo.size.width * 0.08)
-                        .frame(height: answerHeight)
-                        .opacity(isAnswerVisible ? 1 : 0)
+                        Text(prompt.answerText)
+                            .font(.system(size: answerSize, weight: .bold, design: .default))
+                            .foregroundStyle(.primary)
+                            .multilineTextAlignment(.center)
+                            .minimumScaleFactor(0.5)
+                            .lineLimit(2)
+                            .padding(.horizontal, geo.size.width * 0.08)
+                            .frame(height: answerHeight)
+                            .opacity(isAnswerVisible ? 1 : 0)
 
-                    Spacer(minLength: verticalInset)
+                        Spacer(minLength: verticalInset)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .contentShape(Rectangle())
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .buttonStyle(.plain)
+                .frame(width: geo.size.width, height: geo.size.height)
+                .focusEffectDisabled()
+                .focused($isPromptFocused)
                 .contentShape(Rectangle())
+                .onTapGesture { location in
+                    handleTapAtLocation(location, screenWidth: geo.size.width)
+                }
             }
-            .buttonStyle(.plain)
-            .frame(width: geo.size.width, height: geo.size.height)
-            .focusEffectDisabled()
-            .focused($isPromptFocused)
             .onAppear {
                 isPromptFocused = true
             }
@@ -118,7 +124,6 @@ struct RandomPromptView: View {
             .onExitCommand(perform: onBackToModeSelection)
             #endif
         }
-//////        .background(Color.white.ignoresSafeArea())
         .environment(\.isFocusEffectEnabled, false)
     }
 
@@ -127,14 +132,14 @@ struct RandomPromptView: View {
         switch prompt.symbol {
         case .letter(let letter):
             Text(letter.uppercased())
-                .font(.custom(fontName, size: min(size.width, size.height) * 0.92))
+                .font(.system(size: min(size.width, size.height) * 0.92, weight: .bold, design: .default))
                 .foregroundStyle(prompt.displayColor)
                 .minimumScaleFactor(0.4)
                 .lineLimit(1)
             .frame(width: size.width, height: size.height)
         case .number(let number):
             Text(String(number))
-                .font(.custom(fontName, size: min(size.width, size.height) * 0.94))
+                .font(.system(size: min(size.width, size.height) * 0.94, weight: .bold, design: .default))
                 .foregroundStyle(prompt.displayColor)
                 .minimumScaleFactor(0.4)
                 .lineLimit(1)
@@ -180,6 +185,30 @@ struct RandomPromptView: View {
             isAnswerVisible = false
         } else {
             isAnswerVisible = true
+        }
+    }
+    
+    private func handleTapAtLocation(_ location: CGPoint, screenWidth: CGFloat) {
+        if location.x < screenWidth * 0.3 {
+            // Left tap: previous prompt
+            prompt = RandomPrompt.random(excluding: prompt)
+            isAnswerVisible = false
+        } else if location.x > screenWidth * 0.7 {
+            // Right tap: reveal or next
+            if isAnswerVisible {
+                prompt = RandomPrompt.random(excluding: prompt)
+                isAnswerVisible = false
+            } else {
+                isAnswerVisible = true
+            }
+        } else {
+            // Center tap: reveal or next
+            if isAnswerVisible {
+                prompt = RandomPrompt.random(excluding: prompt)
+                isAnswerVisible = false
+            } else {
+                isAnswerVisible = true
+            }
         }
     }
 }

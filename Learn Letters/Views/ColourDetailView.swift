@@ -15,19 +15,32 @@ struct ColourDetailView: View {
 
     var body: some View {
         GeometryReader { geo in
-            Button(action: onSpeak) {
-                Text(currentColour.label)
-                    .font(.custom("AkzidenzGroteskBE-Bold", size: min(geo.size.height * 0.21, geo.size.width * 0.18)))
-                    .foregroundStyle(currentColour.kind.labelColor)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-                    .padding(.horizontal, geo.size.width * 0.08)
-                    .frame(width: geo.size.width, height: geo.size.height)
-                    .background(currentColour.color)
+            ZStack {
+                currentColour.color.ignoresSafeArea()
+                
+                Button(action: onSpeak) {
+                    Text(currentColour.label)
+                        .font(.system(size: min(geo.size.height * 0.21, geo.size.width * 0.18), weight: .bold, design: .default))
+                        .foregroundStyle(currentColour.kind.labelColor)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                        .padding(.horizontal, geo.size.width * 0.08)
+                        .frame(width: geo.size.width, height: geo.size.height)
+                }
+                .buttonStyle(.borderless)
+                .focused($focusedTarget, equals: .hero)
+                .focusEffectDisabled()
+                .contentShape(Rectangle())
+                .onTapGesture { location in
+                    if location.x < geo.size.width * 0.3 {
+                        onDetailMove(.left)
+                    } else if location.x > geo.size.width * 0.7 {
+                        onDetailMove(.right)
+                    } else {
+                        onSpeak()
+                    }
+                }
             }
-            .buttonStyle(.borderless)
-            .focused($focusedTarget, equals: .hero)
-            .focusEffectDisabled()
             #if os(tvOS)
             .onMoveCommand { direction in
                 switch direction {
@@ -43,8 +56,6 @@ struct ColourDetailView: View {
             #endif
             .onAppear(perform: onSpeak)
         }
-        .background(currentColour.color.ignoresSafeArea())
-        .ignoresSafeArea()
         .environment(\.isFocusEffectEnabled, false)
     }
 }
