@@ -1,15 +1,6 @@
 # Learning Things
 
-Learning Things is a SwiftUI learning app for young children across Apple TV, iPhone, and iPad. It presents big, simple visuals, spoken prompts, and touch or remote-friendly navigation for early learning.
-
-The app currently includes:
-
-- letters
-- numbers
-- shapes
-- colours
-- a random prompt mode for quick mixed practice
-- device voice selection with preview and speech on/off control
+Learning Things is a SwiftUI learning app for young children across Apple TV, iPhone, and iPad. It uses large visuals, simple navigation, and spoken prompts to support early learning across letters, numbers, shapes, colours, and mixed practice.
 
 ## Features
 
@@ -17,36 +8,37 @@ The app currently includes:
 
 - **Letters**
   - Browse A–Z.
-  - See large uppercase and lowercase letter presentation.
-  - Hear the letter and a matching word prompt.
+  - See large uppercase and lowercase letters with a matching word.
+  - Hear the letter name and a spoken phrase.
 
 - **Numbers**
   - Browse 0–10.
-  - See the number word plus quantity dots in detail view.
-  - Hear the spoken number.
+  - See the number word and matching quantity dots.
+  - Hear the number name and spoken phrase.
 
 - **Shapes**
-  - Explore 15 shape types including circle, oval, triangle, square, rectangle, diamond, arrow, heart, crescent, star, cloud, pentagon, hexagon, octagon, and rhombus.
-  - Uses custom SwiftUI shape rendering rather than generic symbols.
+  - Explore 15 shapes including circle, oval, triangle, square, rectangle, diamond, arrow, heart, crescent, star, cloud, pentagon, hexagon, octagon, and rhombus.
+  - Uses custom SwiftUI shape rendering rather than SF Symbols for the learning content.
 
 - **Colours**
-  - Browse named colours with strong contrast-aware labels.
-  - Colour detail fills the full content area with the selected colour.
+  - Browse named colours with contrast-aware labels.
+  - Colour detail fills the content area with the selected colour.
 
 - **Random**
-  - Generates a random coloured letter, number, or shape prompt.
-  - Tap/select once to reveal the answer.
-  - Tap/select again to generate the next prompt.
+  - Generates a random coloured letter, number, or shape.
+  - Reveal the answer on tap/select.
+  - Advance to the next prompt with another tap/select.
+  - Excludes grey, black, and white from the random colour pool for visibility.
 
 ### Voice and speech
 
 Speech is powered by `AVSpeechSynthesizer`.
 
 - Voices can be turned on or off.
-- A voice can be selected from the voices installed on the current device.
-- Each available voice can be previewed before selection.
-- The app keeps the selected voice in persistent storage.
-- The voice picker highlights a recommended voice when available.
+- A voice can be selected from the voices available on the current device.
+- Voice selection persists across launches.
+- Voice previews are available in the voice picker.
+- All speech is suppressed when voices are turned off.
 
 Speech is used throughout the app for:
 
@@ -60,29 +52,35 @@ Speech is used throughout the app for:
 
 ### Apple TV
 
-The tvOS experience is designed for the Siri Remote / Apple TV Remote.
+The tvOS experience is designed for the Apple TV remote.
 
 - Move with the directional controls.
 - Press **Select** to open an item.
 - In detail view, use **Left** and **Right** to move between items.
-- Press **Play/Pause** to start or stop auto-play.
+- Press **Play/Pause** to start or stop auto-play where supported.
 - Press **Menu/Back** to return from detail to grid, then back to the mode selector.
 
 ### iPhone
 
 - Uses the mode-selection flow and grid/detail navigation.
-- Layout adapts to portrait and landscape.
-- Touch is the primary interaction model.
+- Uses touch as the primary interaction model.
+- Shares the legacy grid/detail structure with tvOS-style content flows.
 
 ### iPad
 
-- Uses a dedicated split-view learning interface.
-- Sidebar navigation shows modes and items.
-- Detail views support horizontal swipe navigation between items.
+- Uses a dedicated split-view interface built with `NavigationSplitView`.
+- Shows learning modes in the sidebar, then the items for the selected mode.
+- Uses larger sidebar rows, icons, and labels sized for easier child interaction.
+- Shows poster-style placeholder pages for **Letters**, **Numbers**, **Shapes**, and **Colours** before an individual item is selected.
+- Poster items can be tapped directly to open the matching detail view and sync the sidebar selection.
+- Detail views support horizontal swipe navigation.
+- Detail views also support left/right tap zones for previous/next navigation.
 - Sidebar rows include visual previews for shapes and colours.
 - Selection styling is tuned for both light and dark mode.
 
-## Auto-play behaviour
+## Navigation behaviour
+
+### Auto-play
 
 Letters and numbers support auto-play.
 
@@ -91,35 +89,42 @@ Letters and numbers support auto-play.
 
 Auto-play stops when the user manually navigates or switches views.
 
+### Tap and swipe navigation
+
+- On iPad detail views, swiping left/right moves between adjacent items.
+- On iPad detail views, tapping the left side moves to the previous item and tapping the right side moves to the next item.
+- In the random prompt mode, tapping reveals the answer first and then advances to another prompt.
+
 ## Data and assets
 
 - Letter words are loaded from `Learn Letters/LetterWords.txt` with fallback data in code.
 - Colours are centralized in `Learn Letters/Utilities/LearningPalette.swift`.
 - App icons and platform artwork live in `Learn Letters/Assets.xcassets/`.
+- Poster reference artwork lives in `Posters/`.
 
 ## Project structure
 
 Main source code lives in `Learn Letters/`.
 
-Key folders:
+### Key folders
 
 - `Models/`
-  - learning data models such as letters, numbers, shapes, and colours
+  - learning data models for letters, numbers, shapes, and colours
 - `Views/`
   - mode selection, grid/detail screens, random prompt, and voice settings
 - `Views/Components/`
-  - reusable UI pieces including shape rendering
+  - reusable UI pieces including shape rendering and styled letter labels
 - `Services/`
   - speech synthesis and voice management
 - `Utilities/`
   - layout constants, palette helpers, and orientation handling
 
-Important files:
+### Important files
 
 - `Learn Letters/ContentView.swift`
-  - main app orchestration and iPad split-view implementation
+  - main app orchestration and the iPad split-view implementation
 - `Learn Letters/Services/LetterSpeaker.swift`
-  - voice selection, preview, and speech output
+  - voice selection, preview, persistence, and speech output
 - `Learn Letters/Views/ModeSelectionView.swift`
   - starting screen for learning modes and voice settings
 - `Learn Letters/Views/RandomPromptView.swift`
@@ -130,9 +135,9 @@ Important files:
 - Xcode with SwiftUI support
 - Apple platform SDKs for iOS and tvOS
 
-The project is configured for:
+The project is currently configured for:
 
-- **iOS:** 18.0+
+- **iOS:** 26.0+
 - **tvOS:** 26.5+
 
 ## Running the project
@@ -144,6 +149,7 @@ The project is configured for:
 
 ## Notes
 
-- The app uses Apple's SF Display system font for consistent typography across all platforms.
+- The app uses Apple system typography rather than bundled custom fonts.
 - Voice availability depends on what is installed on the device.
-- Some UI behaviour differs intentionally between tvOS and iPad to fit each platform better.
+- Some UI behaviour differs intentionally between tvOS, iPhone, and iPad to better fit each platform.
+- The iPad experience is landscape-only and uses a distinct interface from the legacy iPhone/tvOS flow.

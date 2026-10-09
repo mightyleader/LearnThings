@@ -46,15 +46,17 @@ struct DetailView: View {
                 .buttonStyle(.borderless)
                 .focused($focusedTarget, equals: .hero)
                 .contentShape(Rectangle())
-                .onTapGesture { location in
-                    if location.x < geo.size.width * 0.3 {
-                        onDetailMove(.left)
-                    } else if location.x > geo.size.width * 0.7 {
-                        onDetailMove(.right)
-                    } else {
-                        onSpeak()
-                    }
-                }
+
+                #if os(iOS)
+                Color.clear
+                    .contentShape(Rectangle())
+                    .gesture(
+                        SpatialTapGesture()
+                            .onEnded { value in
+                                handleTap(at: value.location, width: geo.size.width)
+                            }
+                    )
+                #endif
             }
             #if os(tvOS)
             .onMoveCommand { direction in
@@ -70,6 +72,16 @@ struct DetailView: View {
             .onExitCommand(perform: onExit)
             #endif
             .onAppear(perform: onSpeak)
+        }
+    }
+
+    private func handleTap(at location: CGPoint, width: CGFloat) {
+        if location.x < width * 0.3 {
+            onDetailMove(.left)
+        } else if location.x > width * 0.7 {
+            onDetailMove(.right)
+        } else {
+            onSpeak()
         }
     }
 

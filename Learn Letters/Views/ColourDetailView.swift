@@ -31,15 +31,17 @@ struct ColourDetailView: View {
                 .focused($focusedTarget, equals: .hero)
                 .focusEffectDisabled()
                 .contentShape(Rectangle())
-                .onTapGesture { location in
-                    if location.x < geo.size.width * 0.3 {
-                        onDetailMove(.left)
-                    } else if location.x > geo.size.width * 0.7 {
-                        onDetailMove(.right)
-                    } else {
-                        onSpeak()
-                    }
-                }
+
+                #if os(iOS)
+                Color.clear
+                    .contentShape(Rectangle())
+                    .gesture(
+                        SpatialTapGesture()
+                            .onEnded { value in
+                                handleTap(at: value.location, width: geo.size.width)
+                            }
+                    )
+                #endif
             }
             #if os(tvOS)
             .onMoveCommand { direction in
@@ -57,5 +59,15 @@ struct ColourDetailView: View {
             .onAppear(perform: onSpeak)
         }
         .environment(\.isFocusEffectEnabled, false)
+    }
+
+    private func handleTap(at location: CGPoint, width: CGFloat) {
+        if location.x < width * 0.3 {
+            onDetailMove(.left)
+        } else if location.x > width * 0.7 {
+            onDetailMove(.right)
+        } else {
+            onSpeak()
+        }
     }
 }

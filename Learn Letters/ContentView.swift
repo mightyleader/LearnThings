@@ -578,14 +578,24 @@ private struct IPadLearningView: View {
     @State private var currentShapeIndex: Int = 0
     @State private var currentColourIndex: Int = 0
 
+    private let sidebarModeFontSize: CGFloat = 22
+    private let sidebarItemFontSize: CGFloat = 20
+    private let sidebarSecondaryFontSize: CGFloat = 16
+    private let sidebarRowVerticalPadding: CGFloat = 8
+    private let sidebarMinRowHeight: CGFloat = 64
+
     var body: some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
             List(selection: $selection) {
                 Section("Learn") {
                     ForEach(AppMode.allCases) { mode in
                         NavigationLink(value: sidebarSelection(for: mode)) {
-                            Label(mode.title, systemImage: mode.systemImage)
-                                .font(.system(size: 17, weight: .semibold, design: .default))
+                            HStack(spacing: 12) {
+                                Image(systemName: mode.systemImage)
+                                Text(mode.title)
+                            }
+                            .font(.system(size: sidebarModeFontSize, weight: .semibold, design: .default))
+                            .padding(.vertical, sidebarRowVerticalPadding)
                         }
                         .listRowBackground(selectedRowBackground(isSelected: selection == sidebarSelection(for: mode)))
                     }
@@ -598,7 +608,8 @@ private struct IPadLearningView: View {
                             ForEach(LetterCard.samples) { card in
                                 NavigationLink(value: IPadSidebarSelection.letter(card.letter)) {
                                     Text("\(card.uppercaseLetter)  ·  \(card.word)")
-                                        .font(.system(size: 16, weight: .semibold, design: .default))
+                                        .font(.system(size: sidebarItemFontSize, weight: .semibold, design: .default))
+                                        .padding(.vertical, sidebarRowVerticalPadding)
                                 }
                                 .listRowBackground(selectedRowBackground(isSelected: selection == .letter(card.letter)))
                             }
@@ -606,32 +617,34 @@ private struct IPadLearningView: View {
                             ForEach(NumberCard.samples) { card in
                                 NavigationLink(value: IPadSidebarSelection.number(card.number)) {
                                     Text("\(card.displayNumber)  ·  \(card.word)")
-                                        .font(.system(size: 16, weight: .semibold, design: .default))
+                                        .font(.system(size: sidebarItemFontSize, weight: .semibold, design: .default))
+                                        .padding(.vertical, sidebarRowVerticalPadding)
                                 }
                                 .listRowBackground(selectedRowBackground(isSelected: selection == .number(card.number)))
                             }
                         case .shapes:
                             ForEach(ShapeCard.samples) { card in
                                 NavigationLink(value: IPadSidebarSelection.shape(card.kind)) {
-                                    Label {
-                                        Text(card.label)
-                                            .font(.system(size: 16, weight: .semibold, design: .default))
-                                    } icon: {
+                                    HStack(spacing: 12) {
                                         shapeSidebarIcon(for: card)
+                                        Text(card.label)
                                     }
+                                    .font(.system(size: sidebarItemFontSize, weight: .semibold, design: .default))
+                                    .padding(.vertical, sidebarRowVerticalPadding)
                                 }
                                 .listRowBackground(selectedRowBackground(isSelected: selection == .shape(card.kind)))
                             }
                         case .colours:
                             ForEach(ColourCard.samples) { card in
                                 NavigationLink(value: IPadSidebarSelection.colour(card.kind)) {
-                                    Label {
-                                        Text(card.label)
-                                            .font(.system(size: 16, weight: .semibold, design: .default))
-                                    } icon: {
+                                    HStack(spacing: 12) {
                                         Image(systemName: "square.fill")
+                                            .font(.system(size: 24, weight: .bold, design: .default))
                                             .foregroundStyle(card.color)
+                                        Text(card.label)
                                     }
+                                    .font(.system(size: sidebarItemFontSize, weight: .semibold, design: .default))
+                                    .padding(.vertical, sidebarRowVerticalPadding)
                                 }
                                 .listRowBackground(selectedRowBackground(isSelected: selection == .colour(card.kind)))
                             }
@@ -644,16 +657,20 @@ private struct IPadLearningView: View {
                 Section("Settings") {
                     NavigationLink(value: IPadSidebarSelection.voices) {
                         VStack(alignment: .leading, spacing: 10) {
-                            Label("Voices", systemImage: voicesEnabled ? "speaker.wave.2" : "speaker.slash")
-                                .font(.system(size: 17, weight: .semibold, design: .default))
+                            HStack(spacing: 12) {
+                                Image(systemName: voicesEnabled ? "speaker.wave.2" : "speaker.slash")
+                                Text("Voices")
+                            }
+                            .font(.system(size: sidebarModeFontSize, weight: .semibold, design: .default))
                             
                             if voicesEnabled && !selectedVoiceIdentifier.isEmpty {
                                 Text(speaker.selectedVoiceDisplayName)
-                                    .font(.system(size: 13, weight: .regular, design: .default))
+                                    .font(.system(size: sidebarSecondaryFontSize, weight: .regular, design: .default))
                                     .foregroundStyle(.secondary)
-                                    .padding(.leading, 28)
+                                    .padding(.leading, 36)
                             }
                         }
+                        .padding(.vertical, sidebarRowVerticalPadding)
                     }
                     .listRowBackground(selectedRowBackground(isSelected: selection == .voices))
                 }
@@ -661,6 +678,7 @@ private struct IPadLearningView: View {
             .scrollContentBackground(.hidden)
             .background(Color(uiColor: .systemGroupedBackground))
             .tint(.accentColor)
+            .environment(\.defaultMinListRowHeight, sidebarMinRowHeight)
             .navigationTitle("Learn Things")
         } detail: {
             NavigationStack {
@@ -754,10 +772,38 @@ private struct IPadLearningView: View {
                     }
                 )
             }
-        case .mode, nil:
-            IPadPlaceholderView(
-                title: placeholderLabel
-            )
+        case .mode(.letters):
+            LetterPosterGrid { selectedId in
+                if let index = LetterCard.samples.firstIndex(where: { $0.id == selectedId }) {
+                    currentLetterIndex = index
+                }
+                selection = .letter(selectedId)
+            }
+        case .mode(.numbers):
+            NumberPosterGrid { selectedNumber in
+                if let index = NumberCard.samples.firstIndex(where: { $0.number == selectedNumber }) {
+                    currentNumberIndex = index
+                }
+                selection = .number(selectedNumber)
+            }
+        case .mode(.shapes):
+            ShapePosterGrid { selectedKind in
+                if let index = ShapeCard.samples.firstIndex(where: { $0.kind == selectedKind }) {
+                    currentShapeIndex = index
+                }
+                selection = .shape(selectedKind)
+            }
+        case .mode(.colours):
+            ColourPosterGrid { selectedKind in
+                if let index = ColourCard.samples.firstIndex(where: { $0.kind == selectedKind }) {
+                    currentColourIndex = index
+                }
+                selection = .colour(selectedKind)
+            }
+        case .mode(.random):
+            EmptyView()
+        case nil:
+            EmptyView()
         }
     }
 
@@ -862,19 +908,19 @@ private struct IPadLearningView: View {
 
         ShapeSymbolView(kind: card.kind, color: card.color)
             .frame(width: size.width, height: size.height)
-            .frame(width: 22, height: 18)
+            .frame(width: 30, height: 24)
     }
 
     private func shapeSidebarIconSize(for kind: ShapeKind) -> CGSize {
         switch kind {
         case .oval, .rectangle, .arrow, .cloud, .rhombus:
-            return CGSize(width: 18, height: 14)
+            return CGSize(width: 24, height: 18)
         case .diamond:
-            return CGSize(width: 16, height: 16)
+            return CGSize(width: 22, height: 22)
         case .crescent:
-            return CGSize(width: 15, height: 15)
+            return CGSize(width: 20, height: 20)
         default:
-            return CGSize(width: 16, height: 16)
+            return CGSize(width: 22, height: 22)
         }
     }
 
@@ -886,6 +932,308 @@ private struct IPadLearningView: View {
         } else {
             Color.clear
         }
+    }
+}
+
+private struct IPadPosterPage<Content: View>: View {
+    let title: String
+    let subtitle: String?
+    @ViewBuilder let content: Content
+    @Environment(\.colorScheme) private var colorScheme
+
+    init(title: String, subtitle: String? = nil, @ViewBuilder content: () -> Content) {
+        self.title = title
+        self.subtitle = subtitle
+        self.content = content()
+    }
+
+    var body: some View {
+        GeometryReader { geometry in
+            ScrollView {
+                VStack(spacing: min(geometry.size.height * 0.032, 28)) {
+                    VStack(spacing: min(geometry.size.height * 0.01, 10)) {
+                        Text(title)
+                            .font(.system(size: min(geometry.size.width * 0.06, 44), weight: .bold, design: .default))
+                            .foregroundStyle(colorScheme == .dark ? .white : .primary)
+
+                        if let subtitle {
+                            Text(subtitle)
+                                .font(.system(size: min(geometry.size.width * 0.028, 20), weight: .semibold, design: .default))
+                                .foregroundStyle(colorScheme == .dark ? .white.opacity(0.78) : .secondary)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, min(geometry.size.height * 0.035, 30))
+
+                    content
+                }
+                .padding(.horizontal, min(geometry.size.width * 0.045, 36))
+                .padding(.bottom, min(geometry.size.height * 0.045, 36))
+                .frame(maxWidth: .infinity)
+            }
+            .background(Color(uiColor: .systemBackground))
+        }
+    }
+}
+
+private struct LetterPosterGrid: View {
+    let onSelectLetter: (String) -> Void
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        IPadPosterPage(title: "Letters", subtitle: "Tap a letter") {
+            GeometryReader { geometry in
+                let columns = max(4, min(7, Int(geometry.size.width / 112)))
+                let spacing = min(geometry.size.width * 0.018, 16)
+                let itemWidth = (geometry.size.width - (CGFloat(columns - 1) * spacing)) / CGFloat(columns)
+                let tileHeight = min(max(itemWidth * 1.18, 108), 156)
+                let letterSize = tileHeight * 0.40
+                let wordSize = tileHeight * 0.14
+
+                LazyVGrid(columns: Array(repeating: GridItem(.fixed(itemWidth), spacing: spacing), count: columns), spacing: spacing) {
+                    ForEach(LetterCard.samples) { card in
+                        let symbolColor = posterLetterColor(for: card)
+
+                        Button {
+                            onSelectLetter(card.id)
+                        } label: {
+                            VStack(spacing: tileHeight * 0.07) {
+                                LetterPairLabel(
+                                    uppercase: card.uppercaseLetter,
+                                    lowercase: card.lowercaseLetter,
+                                    separator: " ",
+                                    uppercaseColor: symbolColor,
+                                    lowercaseColor: symbolColor.opacity(0.72),
+                                    font: .system(size: letterSize, weight: .bold, design: .default),
+                                    minimumScaleFactor: 0.55,
+                                    horizontalInset: max(4, letterSize * 0.08)
+                                )
+
+                                Text(card.word)
+                                    .font(.system(size: wordSize, weight: .semibold, design: .default))
+                                    .foregroundStyle(colorScheme == .dark ? .white : .primary)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.7)
+                            }
+                            .frame(width: itemWidth, height: tileHeight)
+                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                    .strokeBorder(colorScheme == .dark ? .white.opacity(0.12) : .clear, lineWidth: 1)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .frame(minHeight: 640)
+        }
+    }
+
+    private func posterLetterColor(for card: LetterCard) -> Color {
+        if colorScheme == .dark && card.uppercaseLetter == "Z" {
+            return .white
+        }
+
+        return card.color
+    }
+}
+
+private struct NumberPosterGrid: View {
+    let onSelectNumber: (Int) -> Void
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        IPadPosterPage(title: "Numbers", subtitle: "Tap a number") {
+            GeometryReader { geometry in
+                let columns = max(3, min(4, Int(geometry.size.width / 172)))
+                let spacing = min(geometry.size.width * 0.022, 18)
+                let itemWidth = (geometry.size.width - (CGFloat(columns - 1) * spacing)) / CGFloat(columns)
+                let tileHeight = min(max(itemWidth * 1.16, 140), 210)
+                let numberSize = tileHeight * 0.34
+                let wordSize = tileHeight * 0.11
+                let dotsAreaHeight = tileHeight * 0.24
+
+                LazyVGrid(columns: Array(repeating: GridItem(.fixed(itemWidth), spacing: spacing), count: columns), spacing: spacing) {
+                    ForEach(NumberCard.samples) { card in
+                        Button {
+                            onSelectNumber(card.number)
+                        } label: {
+                            VStack(spacing: tileHeight * 0.05) {
+                                Text(card.displayNumber)
+                                    .font(.system(size: numberSize, weight: .bold, design: .default))
+                                    .foregroundStyle(card.color)
+                                    .minimumScaleFactor(0.6)
+                                    .lineLimit(1)
+
+                                Text(card.word)
+                                    .font(.system(size: wordSize, weight: .semibold, design: .default))
+                                    .foregroundStyle(colorScheme == .dark ? .white : .primary)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.7)
+
+                                PosterNumberDots(number: card.number)
+                                    .frame(height: dotsAreaHeight, alignment: .top)
+                            }
+                            .frame(width: itemWidth, height: tileHeight)
+                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                    .strokeBorder(colorScheme == .dark ? .white.opacity(0.12) : .clear, lineWidth: 1)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .frame(minHeight: 520)
+        }
+    }
+}
+
+private struct ShapePosterGrid: View {
+    let onSelectShape: (ShapeKind) -> Void
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        IPadPosterPage(title: "Shapes", subtitle: "Tap a shape") {
+            GeometryReader { geometry in
+                let columns = max(3, min(4, Int(geometry.size.width / 170)))
+                let spacing = min(geometry.size.width * 0.022, 18)
+                let itemWidth = (geometry.size.width - (CGFloat(columns - 1) * spacing)) / CGFloat(columns)
+                let tileHeight = min(max(itemWidth * 1.08, 148), 212)
+                let labelSize = tileHeight * 0.10
+
+                LazyVGrid(columns: Array(repeating: GridItem(.fixed(itemWidth), spacing: spacing), count: columns), spacing: spacing) {
+                    ForEach(ShapeCard.samples) { card in
+                        Button {
+                            onSelectShape(card.kind)
+                        } label: {
+                            VStack(spacing: tileHeight * 0.10) {
+                                ShapeSymbolView(kind: card.kind, color: card.color)
+                                    .frame(width: shapeSize(for: card.kind, baseWidth: itemWidth * 0.64).width, height: shapeSize(for: card.kind, baseWidth: itemWidth * 0.64).height)
+                                    .frame(maxHeight: .infinity)
+
+                                Text(card.label)
+                                    .font(.system(size: labelSize, weight: .semibold, design: .default))
+                                    .foregroundStyle(colorScheme == .dark ? .white : .primary)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.7)
+                            }
+                            .padding(.top, tileHeight * 0.12)
+                            .padding(.bottom, tileHeight * 0.12)
+                            .frame(width: itemWidth, height: tileHeight)
+                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                    .strokeBorder(colorScheme == .dark ? .white.opacity(0.12) : .clear, lineWidth: 1)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .frame(minHeight: 560)
+        }
+    }
+
+    private func shapeSize(for kind: ShapeKind, baseWidth: CGFloat) -> CGSize {
+        switch kind {
+        case .oval:
+            return CGSize(width: baseWidth, height: baseWidth * 0.56)
+        case .rectangle:
+            return CGSize(width: baseWidth, height: baseWidth * 0.58)
+        case .arrow:
+            return CGSize(width: baseWidth, height: baseWidth * 0.58)
+        case .cloud:
+            return CGSize(width: baseWidth * 0.92, height: baseWidth * 0.68)
+        case .rhombus:
+            return CGSize(width: baseWidth * 0.92, height: baseWidth * 0.64)
+        default:
+            return CGSize(width: baseWidth * 0.78, height: baseWidth * 0.78)
+        }
+    }
+}
+
+private struct ColourPosterGrid: View {
+    let onSelectColour: (ColourKind) -> Void
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        IPadPosterPage(title: "Colours", subtitle: "Tap a colour") {
+            GeometryReader { geometry in
+                let columns = max(3, min(4, Int(geometry.size.width / 172)))
+                let spacing = min(geometry.size.width * 0.022, 18)
+                let itemWidth = (geometry.size.width - (CGFloat(columns - 1) * spacing)) / CGFloat(columns)
+                let tileHeight = min(max(itemWidth * 0.92, 126), 176)
+                let labelSize = tileHeight * 0.115
+
+                LazyVGrid(columns: Array(repeating: GridItem(.fixed(itemWidth), spacing: spacing), count: columns), spacing: spacing) {
+                    ForEach(ColourCard.samples) { card in
+                        Button {
+                            onSelectColour(card.kind)
+                        } label: {
+                            ZStack(alignment: .bottomLeading) {
+                                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                    .fill(card.color)
+                                    .overlay {
+                                        if card.kind == .white {
+                                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                                .strokeBorder(Color(white: 0.76), lineWidth: 2)
+                                        }
+                                    }
+
+                                Text(card.label)
+                                    .font(.system(size: labelSize, weight: .bold, design: .default))
+                                    .foregroundStyle(card.kind.labelColor)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.7)
+                                    .padding(.horizontal, tileHeight * 0.12)
+                                    .padding(.vertical, tileHeight * 0.10)
+                            }
+                            .frame(width: itemWidth, height: tileHeight)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                    .strokeBorder(colorScheme == .dark ? .white.opacity(0.12) : .clear, lineWidth: 1)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .frame(minHeight: 480)
+        }
+    }
+}
+
+private struct PosterNumberDots: View {
+    let number: Int
+
+    var body: some View {
+        let dotsPerRow = number <= 5 ? max(number, 1) : 5
+        let rows = number == 0 ? 1 : (number + dotsPerRow - 1) / dotsPerRow
+        let dotSize: CGFloat = number >= 10 ? 10 : 12
+
+        VStack(spacing: 6) {
+            ForEach(0..<rows, id: \.self) { row in
+                HStack(spacing: 6) {
+                    Spacer(minLength: 0)
+                    ForEach(0..<dotsPerRow, id: \.self) { col in
+                        if number > 0, row * dotsPerRow + col < number {
+                            Circle()
+                                .fill(Color(white: 0.5))
+                                .frame(width: dotSize, height: dotSize)
+                        }
+                    }
+                    Spacer(minLength: 0)
+                }
+            }
+        }
+        .opacity(number == 0 ? 0 : 1)
     }
 }
 
@@ -930,9 +1278,26 @@ private struct IPadLetterDetailView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding(32)
             .contentShape(Rectangle())
+
+            Color.clear
+                .contentShape(Rectangle())
+                .gesture(
+                    SpatialTapGesture()
+                        .onEnded { value in
+                            handleTap(at: value.location, width: geometry.size.width)
+                        }
+                )
         }
         .contentShape(Rectangle())
         .highPriorityGesture(swipeGesture(onSwipeLeft: onSwipeLeft, onSwipeRight: onSwipeRight))
+    }
+
+    private func handleTap(at location: CGPoint, width: CGFloat) {
+        if location.x < width * 0.3 {
+            onSwipeRight()
+        } else if location.x > width * 0.7 {
+            onSwipeLeft()
+        }
     }
 }
 
@@ -966,9 +1331,26 @@ private struct IPadNumberDetailView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding(32)
             .contentShape(Rectangle())
+
+            Color.clear
+                .contentShape(Rectangle())
+                .gesture(
+                    SpatialTapGesture()
+                        .onEnded { value in
+                            handleTap(at: value.location, width: geometry.size.width)
+                        }
+                )
         }
         .contentShape(Rectangle())
         .highPriorityGesture(swipeGesture(onSwipeLeft: onSwipeLeft, onSwipeRight: onSwipeRight))
+    }
+
+    private func handleTap(at location: CGPoint, width: CGFloat) {
+        if location.x < width * 0.3 {
+            onSwipeRight()
+        } else if location.x > width * 0.7 {
+            onSwipeLeft()
+        }
     }
 
     private func dotsForNumber(_ number: Int) -> some View {
@@ -1038,9 +1420,26 @@ private struct IPadShapeDetailView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding(32)
             .contentShape(Rectangle())
+
+            Color.clear
+                .contentShape(Rectangle())
+                .gesture(
+                    SpatialTapGesture()
+                        .onEnded { value in
+                            handleTap(at: value.location, width: geometry.size.width)
+                        }
+                )
         }
         .contentShape(Rectangle())
         .highPriorityGesture(swipeGesture(onSwipeLeft: onSwipeLeft, onSwipeRight: onSwipeRight))
+    }
+
+    private func handleTap(at location: CGPoint, width: CGFloat) {
+        if location.x < width * 0.3 {
+            onSwipeRight()
+        } else if location.x > width * 0.7 {
+            onSwipeLeft()
+        }
     }
 
     private func shapeSymbolSize(maxSize: CGFloat) -> CGSize {
@@ -1078,11 +1477,28 @@ private struct IPadColourDetailView: View {
                     .minimumScaleFactor(0.7)
                     .padding(.horizontal, geometry.size.width * 0.08)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+
+                Color.clear
+                    .contentShape(Rectangle())
+                    .gesture(
+                        SpatialTapGesture()
+                            .onEnded { value in
+                                handleTap(at: value.location, width: geometry.size.width)
+                            }
+                    )
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .contentShape(Rectangle())
         .highPriorityGesture(swipeGesture(onSwipeLeft: onSwipeLeft, onSwipeRight: onSwipeRight))
+    }
+
+    private func handleTap(at location: CGPoint, width: CGFloat) {
+        if location.x < width * 0.3 {
+            onSwipeRight()
+        } else if location.x > width * 0.7 {
+            onSwipeLeft()
+        }
     }
 }
 
