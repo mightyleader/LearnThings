@@ -54,7 +54,11 @@ struct ContentView: View {
                 voicesEnabled: $voicesEnabled
             )
         } else {
-            legacyRootView
+            IPhoneLearningView(
+                speaker: speaker,
+                selectedVoiceIdentifier: $selectedVoiceIdentifier,
+                voicesEnabled: $voicesEnabled
+            )
         }
         #else
         legacyRootView

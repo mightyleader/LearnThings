@@ -14,7 +14,10 @@ struct ModeSelectionView: View {
     @FocusState private var focusedButton: ModeButton?
     @State private var lastFocusedBottomMode: ModeButton = .shapes
 
-    private let cardCornerRadius: CGFloat = 18
+    private let cardCornerRadius: CGFloat = 22
+    private let buttonBase = Color(red: 0.97, green: 0.98, blue: 1.0)
+    private let buttonBorder = Color(red: 0.88, green: 0.90, blue: 0.94)
+    private let inkColor = Color(red: 0.18, green: 0.22, blue: 0.32)
 
     enum ModeButton {
         case letters
@@ -27,18 +30,16 @@ struct ModeSelectionView: View {
 
     var body: some View {
         GeometryReader { geo in
-            let cardWidth = geo.size.width * 0.36
-            let cardHeight = geo.size.height * 0.24
-            let voiceWidth = geo.size.width * 0.30
-            let voiceHeight = geo.size.height * 0.09
+            let cardWidth = geo.size.width * 0.29
+            let cardHeight = geo.size.height * 0.16
+            let voiceWidth = geo.size.width * 0.25
+            let voiceHeight = geo.size.height * 0.08
             let subtitleSize = cardHeight * 0.20
-            let focusBlue = Color(red: 0.87, green: 0.94, blue: 1.0)
-            let buttonBase = Color.white
 
-            VStack(spacing: geo.size.height * 0.018) {
+            VStack(spacing: geo.size.height * 0.035) {
                 Spacer(minLength: geo.size.height * 0.035)
 
-                HStack(spacing: geo.size.width * 0.04) {
+                HStack(spacing: geo.size.width * 0.12) {
                     makeModeCard(
                         mode: .letters,
                         subtitle: "letters",
@@ -57,7 +58,7 @@ struct ModeSelectionView: View {
                 }
                 .frame(maxWidth: .infinity)
 
-                HStack(spacing: geo.size.width * 0.04) {
+                HStack(spacing: geo.size.width * 0.12) {
                     makeModeCard(
                         mode: .shapes,
                         subtitle: "shapes",
@@ -105,24 +106,24 @@ struct ModeSelectionView: View {
                             }
                         }
                         .font(.system(size: geo.size.height * 0.05, weight: .semibold, design: .default))
-                        .foregroundStyle(Color(red: 0.18, green: 0.22, blue: 0.32))
+                        .foregroundStyle(inkColor)
                         .frame(width: voiceWidth, height: voiceHeight)
                         .background(
                             RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                .fill(focusedButton == .voice ? focusBlue : buttonBase)
+                                .fill(buttonBase)
                         )
-                        .scaleEffect(focusedButton == .voice ? 1.04 : 1.0)
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                                .strokeBorder(buttonBorder, lineWidth: 1)
+                        }
                     }
-                    .buttonStyle(.borderless)
                     .focused($focusedButton, equals: .voice)
-                    .focusEffectDisabled(true)
                 }
 
                 Spacer(minLength: geo.size.height * 0.035)
             }
             .frame(width: geo.size.width, height: geo.size.height)
             .background(Color.white)
-            .environment(\.isFocusEffectEnabled, false)
             .onAppear {
                 if focusedButton == nil {
                     focusedButton = .letters
@@ -170,7 +171,6 @@ struct ModeSelectionView: View {
             }
             #endif
         }
-        .focusEffectDisabled(true)
     }
     
     private func makeModeCard(
@@ -180,30 +180,30 @@ struct ModeSelectionView: View {
         height: CGFloat,
         subtitleSize: CGFloat
     ) -> some View {
-        Button(action: {
+        return Button(action: {
             selectedMode = mode
         }) {
             VStack(spacing: height * 0.08) {
                 Image(systemName: mode.systemImage)
                     .font(.system(size: height * 0.42, weight: .semibold))
-                    .foregroundStyle(Color(red: 0.18, green: 0.22, blue: 0.32))
+                    .foregroundStyle(inkColor)
 
                 Text(subtitle)
                     .font(.system(size: subtitleSize, weight: .semibold, design: .default))
-                    .foregroundStyle(.black)
+                    .foregroundStyle(inkColor)
                     .textCase(.lowercase)
             }
             .frame(width: width, height: height)
-            .padding(.horizontal, width * 0.05)
             .background(
                 RoundedRectangle(cornerRadius: cardCornerRadius + 10, style: .continuous)
-                    .fill(focusedButton == modeFocus(mode) ? Color(red: 0.87, green: 0.94, blue: 1.0) : Color.white)
+                    .fill(buttonBase)
             )
-            .scaleEffect(focusedButton == modeFocus(mode) ? 1.04 : 1.0)
+            .overlay {
+                RoundedRectangle(cornerRadius: cardCornerRadius + 10, style: .continuous)
+                    .strokeBorder(buttonBorder, lineWidth: 1)
+            }
         }
-        .buttonStyle(.borderless)
         .focused($focusedButton, equals: modeFocus(mode))
-        .focusEffectDisabled(true)
     }
 
     private func modeFocus(_ mode: AppMode) -> ModeButton {
