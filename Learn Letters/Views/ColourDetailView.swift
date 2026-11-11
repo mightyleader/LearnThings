@@ -8,6 +8,8 @@ import SwiftUI
 struct ColourDetailView: View {
     let currentColour: ColourCard
     @FocusState var focusedTarget: FocusTarget?
+    var autoPlayStartedAt: Date?
+    var autoPlayInterval: TimeInterval
     var onDetailMove: (NavigationDirection) -> Void
     var onDetailPlayPause: () -> Void
     var onExit: () -> Void
@@ -42,6 +44,12 @@ struct ColourDetailView: View {
                             }
                     )
                 #endif
+
+                if let autoPlayStartedAt {
+                    AutoPlayProgressIndicator(startDate: autoPlayStartedAt, duration: autoPlayInterval)
+                        .padding(24)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                }
             }
             #if os(tvOS)
             .onMoveCommand { direction in

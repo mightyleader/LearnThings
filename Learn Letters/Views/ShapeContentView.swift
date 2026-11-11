@@ -16,6 +16,7 @@ struct ShapeContentView: View {
     @FocusState private var focusedTarget: FocusTarget?
     @State private var isAutoPlayActive = false
     @State private var autoPlayTimer: Timer?
+    @State private var detailAutoPlayStartedAt: Date?
 
     private let shapes = ShapeCard.samples
     private let columns = 4
@@ -43,6 +44,8 @@ struct ShapeContentView: View {
                 ShapeDetailView(
                     currentShape: currentShape,
                     focusedTarget: _focusedTarget,
+                    autoPlayStartedAt: detailAutoPlayStartedAt,
+                    autoPlayInterval: detailDwellTime,
                     onDetailMove: handleHeroMove,
                     onDetailPlayPause: handleDetailPlayPause,
                     onExit: handleExitToGrid,
@@ -140,6 +143,7 @@ struct ShapeContentView: View {
     }
 
     private func scheduleNextDetailShape() {
+        detailAutoPlayStartedAt = Date()
         autoPlayTimer = Timer.scheduledTimer(withTimeInterval: detailDwellTime, repeats: false) { _ in
             if isAutoPlayActive {
                 nextShape()
@@ -152,6 +156,7 @@ struct ShapeContentView: View {
         isAutoPlayActive = false
         autoPlayTimer?.invalidate()
         autoPlayTimer = nil
+        detailAutoPlayStartedAt = nil
     }
 
     private func handleGridMove(_ direction: NavigationDirection) {

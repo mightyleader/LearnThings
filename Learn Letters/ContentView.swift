@@ -154,6 +154,7 @@ struct LetterContentView: View {
     @FocusState private var focusedTarget: FocusTarget?
     @State private var isAutoPlayActive = false
     @State private var autoPlayTimer: Timer?
+    @State private var detailAutoPlayStartedAt: Date?
 
     private let alphabet = LetterCard.samples
     private let gridDwellTime: TimeInterval = 1.0
@@ -180,6 +181,8 @@ struct LetterContentView: View {
                 DetailView(
                     currentLetter: currentLetter,
                     focusedTarget: _focusedTarget,
+                    autoPlayStartedAt: detailAutoPlayStartedAt,
+                    autoPlayInterval: detailDwellTime,
                     onDetailMove: handleHeroMove,
                     onDetailPlayPause: handleDetailPlayPause,
                     onExit: handleExitToGrid,
@@ -278,6 +281,7 @@ struct LetterContentView: View {
     }
 
     private func scheduleNextDetailLetter() {
+        detailAutoPlayStartedAt = Date()
         autoPlayTimer = Timer.scheduledTimer(withTimeInterval: detailDwellTime, repeats: false) { _ in
             if isAutoPlayActive {
                 nextLetter()
@@ -290,6 +294,7 @@ struct LetterContentView: View {
         isAutoPlayActive = false
         autoPlayTimer?.invalidate()
         autoPlayTimer = nil
+        detailAutoPlayStartedAt = nil
     }
 
     private func handleGridMove(_ direction: NavigationDirection) {
@@ -358,6 +363,7 @@ struct NumberContentView: View {
     @FocusState private var focusedTarget: FocusTarget?
     @State private var isAutoPlayActive = false
     @State private var autoPlayTimer: Timer?
+    @State private var detailAutoPlayStartedAt: Date?
 
     private let numbers = NumberCard.samples
     private let gridDwellTime: TimeInterval = 1.0
@@ -384,6 +390,8 @@ struct NumberContentView: View {
                 NumberDetailView(
                     currentNumber: currentNumber,
                     focusedTarget: _focusedTarget,
+                    autoPlayStartedAt: detailAutoPlayStartedAt,
+                    autoPlayInterval: detailDwellTime,
                     onDetailMove: handleHeroMove,
                     onDetailPlayPause: handleDetailPlayPause,
                     onExit: handleExitToGrid,
@@ -482,6 +490,7 @@ struct NumberContentView: View {
     }
 
     private func scheduleNextDetailNumber() {
+        detailAutoPlayStartedAt = Date()
         autoPlayTimer = Timer.scheduledTimer(withTimeInterval: detailDwellTime, repeats: false) { _ in
             if isAutoPlayActive {
                 nextNumber()
@@ -494,6 +503,7 @@ struct NumberContentView: View {
         isAutoPlayActive = false
         autoPlayTimer?.invalidate()
         autoPlayTimer = nil
+        detailAutoPlayStartedAt = nil
     }
 
     private func handleGridMove(_ direction: NavigationDirection) {
@@ -581,6 +591,7 @@ private struct IPadLearningView: View {
     @State private var isAutoPlaying = false
     @State private var isAutoAdvancing = false
     @State private var autoPlayTimer: Timer?
+    @State private var autoPlayStartedAt: Date?
     private let autoPlayDwellTime: TimeInterval = 4.0
 
     private let sidebarModeFontSize: CGFloat = 22
@@ -696,10 +707,22 @@ private struct IPadLearningView: View {
                 .toolbar {
                     if isDetailCardSelected {
                         ToolbarItem(placement: .topBarTrailing) {
-                            Button(action: toggleAutoPlay) {
-                                Image(systemName: isAutoPlaying ? "pause.fill" : "play.fill")
+                            HStack(spacing: 8) {
+                                if isAutoPlaying, let autoPlayStartedAt {
+                                    AutoPlayProgressIndicator(
+                                        startDate: autoPlayStartedAt,
+                                        duration: autoPlayDwellTime,
+                                        size: 28
+                                    )
+                                    .padding(.leading, 8)
+                                }
+                                Button(action: toggleAutoPlay) {
+                                    Image(systemName: isAutoPlaying ? "pause.fill" : "play.fill")
+                                        .frame(width: 44, height: 44)
+                                }
+                                .accessibilityLabel(isAutoPlaying ? "Pause" : "Play")
+                                .fixedSize()
                             }
-                            .accessibilityLabel(isAutoPlaying ? "Pause" : "Play")
                         }
                     }
                 }
@@ -742,6 +765,7 @@ private struct IPadLearningView: View {
     }
 
     private func scheduleNextAutoPlayCard() {
+        autoPlayStartedAt = Date()
         autoPlayTimer = Timer.scheduledTimer(withTimeInterval: autoPlayDwellTime, repeats: false) { _ in
             if isAutoPlaying {
                 advanceToNextCard()
@@ -754,6 +778,7 @@ private struct IPadLearningView: View {
         isAutoPlaying = false
         autoPlayTimer?.invalidate()
         autoPlayTimer = nil
+        autoPlayStartedAt = nil
     }
 
     private func advanceToNextCard() {
