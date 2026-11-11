@@ -25,18 +25,12 @@ struct ModeSelectionView: View {
         case voice
     }
 
-    private struct Token {
-        let text: String
-        let color: Color
-    }
-    
     var body: some View {
         GeometryReader { geo in
             let cardWidth = geo.size.width * 0.36
             let cardHeight = geo.size.height * 0.24
             let voiceWidth = geo.size.width * 0.30
             let voiceHeight = geo.size.height * 0.09
-            let topLineSize = cardHeight * 0.40
             let subtitleSize = cardHeight * 0.20
             let focusBlue = Color(red: 0.87, green: 0.94, blue: 1.0)
             let buttonBase = Color.white
@@ -47,21 +41,17 @@ struct ModeSelectionView: View {
                 HStack(spacing: geo.size.width * 0.04) {
                     makeModeCard(
                         mode: .letters,
-                        tokens: tokenLine(texts: ["A", "B", "C"], colors: Array(LetterCard.samples.prefix(3).map(\.color))),
                         subtitle: "letters",
                         width: cardWidth,
                         height: cardHeight,
-                        topLineSize: topLineSize,
                         subtitleSize: subtitleSize
                     )
 
                     makeModeCard(
                         mode: .numbers,
-                        tokens: tokenLine(texts: ["1", "2", "3"], colors: Array(NumberCard.samples.prefix(3).map(\.color))),
                         subtitle: "numbers",
                         width: cardWidth,
                         height: cardHeight,
-                        topLineSize: topLineSize,
                         subtitleSize: subtitleSize
                     )
                 }
@@ -70,20 +60,16 @@ struct ModeSelectionView: View {
                 HStack(spacing: geo.size.width * 0.04) {
                     makeModeCard(
                         mode: .shapes,
-                        tokens: tokenLine(texts: ["★", "▲", "■"], colors: Array(ShapeCard.samples.prefix(3).map(\.color))),
                         subtitle: "shapes",
                         width: cardWidth,
                         height: cardHeight,
-                        topLineSize: topLineSize,
                         subtitleSize: subtitleSize
                     )
                     makeModeCard(
                         mode: .colours,
-                        tokens: tokenLine(texts: ["■", "■", "■"], colors: Array(ColourCard.samples.prefix(3).map(\.color))),
                         subtitle: "colours",
                         width: cardWidth,
                         height: cardHeight,
-                        topLineSize: topLineSize,
                         subtitleSize: subtitleSize
                     )
                 }
@@ -92,18 +78,9 @@ struct ModeSelectionView: View {
                 HStack {
                     makeModeCard(
                         mode: .random,
-                        tokens: tokenLine(
-                            texts: ["A", "7", "★"],
-                            colors: [
-                                LearningPalette.color(forLetter: "A"),
-                                LearningPalette.color(forNumber: 7),
-                                LearningPalette.color(forShape: .star)
-                            ]
-                        ),
                         subtitle: "random",
                         width: cardWidth,
                         height: cardHeight,
-                        topLineSize: topLineSize,
                         subtitleSize: subtitleSize
                     )
                 }
@@ -196,31 +173,20 @@ struct ModeSelectionView: View {
         .focusEffectDisabled(true)
     }
     
-    private func tokenLine(texts: [String], colors: [Color]) -> [Token] {
-        zip(texts, colors).map { Token(text: $0.0, color: $0.1) }
-    }
-
     private func makeModeCard(
         mode: AppMode,
-        tokens: [Token],
         subtitle: String,
         width: CGFloat,
         height: CGFloat,
-        topLineSize: CGFloat,
         subtitleSize: CGFloat
     ) -> some View {
         Button(action: {
             selectedMode = mode
         }) {
             VStack(spacing: height * 0.08) {
-                HStack(spacing: 0) {
-                    ForEach(Array(tokens.enumerated()), id: \.offset) { index, token in
-                        Text(token.text)
-                            .font(.system(size: topLineSize, weight: .bold, design: .default))
-                            .foregroundStyle(token.color)
-                            .tracking(index == tokens.count - 1 ? 0 : -2)
-                    }
-                }
+                Image(systemName: mode.systemImage)
+                    .font(.system(size: height * 0.42, weight: .semibold))
+                    .foregroundStyle(Color(red: 0.18, green: 0.22, blue: 0.32))
 
                 Text(subtitle)
                     .font(.system(size: subtitleSize, weight: .semibold, design: .default))
