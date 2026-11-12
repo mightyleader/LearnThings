@@ -81,7 +81,7 @@ struct RandomPromptView: View {
     var onBackToModeSelection: () -> Void
 
     @State private var prompt = RandomPrompt.random()
-    @State private var isAnswerVisible = false
+    @Environment(\.colorScheme) private var colorScheme
     @FocusState private var isPromptFocused: Bool
 
     var body: some View {
@@ -94,7 +94,7 @@ struct RandomPromptView: View {
             let canvasHeight = max(0, geo.size.height - (verticalInset * 2) - (contentSpacing * 3) - answerHeight)
 
             ZStack {
-                (prompt.isColourOnly ? prompt.displayColor : Color.white).ignoresSafeArea()
+                (prompt.isColourOnly ? prompt.displayColor : Color.appBackground).ignoresSafeArea()
                 
                 Button(action: handlePrimaryAction) {
                     VStack(spacing: contentSpacing) {
@@ -111,7 +111,6 @@ struct RandomPromptView: View {
                             .lineLimit(2)
                             .padding(.horizontal, geo.size.width * 0.08)
                             .frame(height: answerHeight)
-                            .opacity(isAnswerVisible ? 1 : 0)
 
                         Spacer(minLength: verticalInset)
                     }
@@ -123,9 +122,6 @@ struct RandomPromptView: View {
                 .focusEffectDisabled()
                 .focused($isPromptFocused)
                 .contentShape(Rectangle())
-                .onTapGesture { location in
-                    handleTapAtLocation(location, screenWidth: geo.size.width)
-                }
             }
             .onAppear {
                 isPromptFocused = true
@@ -144,19 +140,19 @@ struct RandomPromptView: View {
         case .letter(let letter):
             Text(letter.uppercased())
                 .font(.system(size: min(size.width, size.height) * 0.92, weight: .bold, design: .rounded))
-                .foregroundStyle(prompt.displayColor)
+                .foregroundStyle(symbolColor)
                 .minimumScaleFactor(0.4)
                 .lineLimit(1)
             .frame(width: size.width, height: size.height)
         case .number(let number):
             Text(String(number))
                 .font(.system(size: min(size.width, size.height) * 0.94, weight: .bold, design: .rounded))
-                .foregroundStyle(prompt.displayColor)
+                .foregroundStyle(symbolColor)
                 .minimumScaleFactor(0.4)
                 .lineLimit(1)
                 .frame(width: size.width, height: size.height)
         case .shape(let kind):
-            ShapeSymbolView(kind: kind, color: prompt.displayColor)
+            ShapeSymbolView(kind: kind, color: symbolColor)
                 .frame(width: shapeFrame(for: kind, in: size).width, height: shapeFrame(for: kind, in: size).height)
         case .colour:
             Color.clear
@@ -193,37 +189,12 @@ struct RandomPromptView: View {
         }
     }
 
-    private func handlePrimaryAction() {
-        if isAnswerVisible {
-            prompt = RandomPrompt.random(excluding: prompt)
-            isAnswerVisible = false
-        } else {
-            isAnswerVisible = true
-        }
+    private var symbolColor: Color {
+        prompt.displayColor.adaptedForDarkMode(colorScheme)
     }
-    
-    private func handleTapAtLocation(_ location: CGPoint, screenWidth: CGFloat) {
-        if location.x < screenWidth * 0.3 {
-            // Left tap: previous prompt
-            prompt = RandomPrompt.random(excluding: prompt)
-            isAnswerVisible = false
-        } else if location.x > screenWidth * 0.7 {
-            // Right tap: reveal or next
-            if isAnswerVisible {
-                prompt = RandomPrompt.random(excluding: prompt)
-                isAnswerVisible = false
-            } else {
-                isAnswerVisible = true
-            }
-        } else {
-            // Center tap: reveal or next
-            if isAnswerVisible {
-                prompt = RandomPrompt.random(excluding: prompt)
-                isAnswerVisible = false
-            } else {
-                isAnswerVisible = true
-            }
-        }
+
+    private func handlePrimaryAction() {
+        prompt = RandomPrompt.random(excluding: prompt)
     }
 }
 
