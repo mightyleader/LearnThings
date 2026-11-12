@@ -17,6 +17,7 @@ struct NumberDetailView: View {
     var onExit: () -> Void
     var onSpeak: () -> Void
     private let numberHeightRatio: CGFloat = 0.50
+    @Environment(\.colorScheme) private var colorScheme
     private let wordHeightRatio: CGFloat = 0.15
     private let vStackSpacingRatio: CGFloat = 0.05
     private let dotsAreaHeight: CGFloat = 92
@@ -28,18 +29,18 @@ struct NumberDetailView: View {
             let topInset   = geo.size.height * 0.08
 
             ZStack {
-                Color.white.ignoresSafeArea()
+                Color.appBackground.ignoresSafeArea()
                 
                 Button(action: onSpeak) {
                     VStack(alignment: .center, spacing: geo.size.height * vStackSpacingRatio) {
                         Text(currentNumber.displayNumber)
-                            .font(.system(size: numberSize, weight: .bold, design: .default))
-                            .foregroundStyle(currentNumber.color)
+                            .font(.system(size: numberSize, weight: .bold, design: .rounded))
+                            .foregroundStyle(currentNumber.color.adaptedForDarkMode(colorScheme))
                             .padding()
 
                         Text(currentNumber.word)
                             .font(.system(size: wordSize, weight: .bold, design: .default))
-                            .foregroundStyle(.black)
+                            .foregroundStyle(.primary)
                         
                         dotsForNumber(currentNumber.number)
                             .frame(height: dotsAreaHeight, alignment: .top)

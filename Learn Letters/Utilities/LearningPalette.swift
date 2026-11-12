@@ -167,3 +167,38 @@ enum LearningPalette {
         return colors
     }
 }
+
+extension Color {
+    static var appBackground: Color {
+        #if os(watchOS)
+        .black
+        #elseif os(tvOS)
+        Color(UIColor { $0.userInterfaceStyle == .dark ? .black : .white })
+        #else
+        Color(.systemBackground)
+        #endif
+    }
+
+    /// Lightens card colours that lack contrast against a dark background (WCAG 4.5:1 against black).
+    func adaptedForDarkMode(_ scheme: ColorScheme) -> Color {
+        guard scheme == .dark else { return self }
+        let c = resolve(in: EnvironmentValues())
+        let r = Double(c.red), g = Double(c.green), b = Double(c.blue)
+
+        func linear(_ v: Double) -> Double {
+            v <= 0.04045 ? v / 12.92 : pow((v + 0.055) / 1.055, 2.4)
+        }
+        func luminance(_ t: Double) -> Double {
+            let mr = r + (1 - r) * t, mg = g + (1 - g) * t, mb = b + (1 - b) * t
+            return 0.2126 * linear(mr) + 0.7152 * linear(mg) + 0.0722 * linear(mb)
+        }
+
+        let minimumLuminance = 0.175
+        var t = 0.0
+        while luminance(t) < minimumLuminance && t < 1 {
+            t += 0.05
+        }
+        guard t > 0 else { return self }
+        return Color(red: r + (1 - r) * t, green: g + (1 - g) * t, blue: b + (1 - b) * t)
+    }
+}

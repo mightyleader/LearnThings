@@ -55,7 +55,7 @@ struct NumberGridView: View {
                                 onSelectTile(globalIndex)
                             } label: {
                                 Text(item.displayNumber)
-                                    .font(.system(size: fontSize, weight: .bold, design: .default))
+                                    .font(.system(size: fontSize, weight: .bold, design: .rounded))
                                     .foregroundStyle(item.color)
                                     .tracking(item.number == 10 ? -1 : 0)
                                     .frame(width: tileWidth, height: cellHeight, alignment: .center)

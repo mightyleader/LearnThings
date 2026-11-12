@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ShapeGridView: View {
     let shapes: [ShapeCard]
+    @Environment(\.colorScheme) private var colorScheme
     @FocusState var focusedTarget: FocusTarget?
     var onBackToModeSelection: () -> Void
     var onGridMove: (NavigationDirection) -> Void
@@ -46,12 +47,12 @@ struct ShapeGridView: View {
                             onSelectTile(index)
                         } label: {
                             VStack(spacing: cellHeight * 0.10) {
-                                ShapeSymbolView(kind: item.kind, color: item.color)
+                                ShapeSymbolView(kind: item.kind, color: item.color.adaptedForDarkMode(colorScheme))
                                     .frame(width: symbolSize.width, height: symbolSize.height)
 
                                 Text(item.label)
                                     .font(.system(size: labelSize, weight: .semibold, design: .default))
-                                    .foregroundStyle(.black)
+                                    .foregroundStyle(.primary)
                                     .lineLimit(1)
                             }
                             .frame(width: cellWidth, height: cellHeight)
@@ -72,7 +73,7 @@ struct ShapeGridView: View {
             .frame(width: geo.size.width, height: geo.size.height)
             .padding(.top, outerTopPadding)
             .padding(.bottom, outerBottomPadding)
-            .background(Color.white)
+            .background(Color.appBackground)
             .environment(\.isFocusEffectEnabled, false)
             #if os(tvOS)
             .onMoveCommand { direction in

@@ -25,7 +25,7 @@ struct ColourContentView: View {
 
     var body: some View {
         ZStack {
-            Color.white.ignoresSafeArea()
+            Color.appBackground.ignoresSafeArea()
 
             if showingGrid {
                 ColourGridView(

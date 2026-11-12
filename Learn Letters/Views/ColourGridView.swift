@@ -46,7 +46,7 @@ struct ColourGridView: View {
 
                             Text(item.label)
                                 .font(.system(size: labelSize, weight: .semibold, design: .default))
-                                .foregroundStyle(.black)
+                                .foregroundStyle(.primary)
                                 .lineLimit(1)
                         }
                         .frame(width: cellWidth, height: cellHeight)
@@ -63,7 +63,7 @@ struct ColourGridView: View {
             .padding(.horizontal, hPad)
             .padding(.vertical, vPad)
             .frame(width: geo.size.width, height: geo.size.height)
-            .background(Color.white)
+            .background(Color.appBackground)
             .environment(\.isFocusEffectEnabled, false)
             #if os(tvOS)
             .onMoveCommand { direction in

@@ -123,7 +123,7 @@ struct ModeSelectionView: View {
                 Spacer(minLength: geo.size.height * 0.035)
             }
             .frame(width: geo.size.width, height: geo.size.height)
-            .background(Color.white)
+            .background(Color.appBackground)
             .onAppear {
                 if focusedButton == nil {
                     focusedButton = .letters

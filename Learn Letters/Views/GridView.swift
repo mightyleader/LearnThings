@@ -43,7 +43,7 @@ struct GridView: View {
                             separator: "",
                             uppercaseColor: item.color,
                             lowercaseColor: item.color.opacity(0.35),
-                            font: .system(size: fontSize, weight: .bold, design: .default),
+                            font: .system(size: fontSize, weight: .bold, design: .rounded),
                             minimumScaleFactor: 0.8,
                             horizontalInset: max(2, fontSize * 0.08)
                         )

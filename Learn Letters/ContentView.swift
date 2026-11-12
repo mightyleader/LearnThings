@@ -170,7 +170,7 @@ struct LetterContentView: View {
 
     var body: some View {
         ZStack {
-            Color.white.ignoresSafeArea()
+            Color.appBackground.ignoresSafeArea()
 
             if showingGrid {
                 GridView(
@@ -379,7 +379,7 @@ struct NumberContentView: View {
 
     var body: some View {
         ZStack {
-            Color.white.ignoresSafeArea()
+            Color.appBackground.ignoresSafeArea()
 
             if showingGrid {
                 NumberGridView(
@@ -1124,7 +1124,7 @@ private struct LetterPosterGrid: View {
                                 separator: " ",
                                 uppercaseColor: symbolColor,
                                 lowercaseColor: symbolColor.opacity(0.72),
-                                font: .system(size: letterSize, weight: .bold, design: .default),
+                                font: .system(size: letterSize, weight: .bold, design: .rounded),
                                 minimumScaleFactor: 0.55,
                                 horizontalInset: max(4, letterSize * 0.08)
                             )
@@ -1179,7 +1179,7 @@ private struct NumberPosterGrid: View {
                     } label: {
                         VStack(spacing: tileHeight * 0.05) {
                             Text(card.displayNumber)
-                                .font(.system(size: numberSize, weight: .bold, design: .default))
+                                .font(.system(size: numberSize, weight: .bold, design: .rounded))
                                 .foregroundStyle(card.color)
                                 .minimumScaleFactor(0.6)
                                 .lineLimit(1)
@@ -1377,7 +1377,7 @@ private struct IPadLetterDetailView: View {
 
             VStack(spacing: 28) {
                 Text(card.uppercaseLetter)
-                    .font(.system(size: symbolSize, weight: .bold, design: .default))
+                    .font(.system(size: symbolSize, weight: .bold, design: .rounded))
                     .foregroundStyle(card.color)
                     .minimumScaleFactor(0.5)
                     .lineLimit(1)
@@ -1412,7 +1412,7 @@ private struct IPadNumberDetailView: View {
 
             VStack(spacing: 28) {
                 Text(card.displayNumber)
-                    .font(.system(size: symbolSize, weight: .bold, design: .default))
+                    .font(.system(size: symbolSize, weight: .bold, design: .rounded))
                     .foregroundStyle(card.color)
                     .minimumScaleFactor(0.5)
                     .lineLimit(1)

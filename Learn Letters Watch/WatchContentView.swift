@@ -18,6 +18,7 @@ struct WatchContentView: View {
 
 private struct WatchCardBrowser: View {
     let mode: WatchLearningMode
+    @Environment(\.colorScheme) private var colorScheme
     @State private var crownValue = 0.0
 
     private var cards: [WatchLearningCard] {
@@ -36,7 +37,7 @@ private struct WatchCardBrowser: View {
                 ZStack {
                     color.ignoresSafeArea()
                     Text(card.word)
-                        .font(.system(size: 40, weight: .bold, design: .rounded))
+                        .font(.system(size: 40, weight: .bold, design: .default))
                         .foregroundStyle(card.labelColor)
                         .minimumScaleFactor(0.5)
                         .lineLimit(1)
@@ -57,6 +58,10 @@ private struct WatchCardBrowser: View {
                 .padding(.vertical, 4)
             }
         }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            crownValue = Double((selectedIndex + 1) % cards.count)
+        }
         .digitalCrownRotation(
             $crownValue,
             from: 0,
@@ -75,18 +80,18 @@ private struct WatchCardBrowser: View {
             VStack(spacing: 2) {
                 Text(value)
                     .font(.system(size: 160, weight: .bold, design: .rounded))
-                    .foregroundStyle(card.color)
+                    .foregroundStyle(card.color.adaptedForDarkMode(colorScheme))
                     .minimumScaleFactor(0.2)
                     .lineLimit(1)
                 if let count = card.dotCount, count > 0 {
-                    WatchNumberDots(number: count, color: card.color)
+                    WatchNumberDots(number: count, color: card.color.adaptedForDarkMode(colorScheme))
                 }
             }
         case .symbol(let name):
             Image(systemName: name)
                 .resizable()
                 .scaledToFit()
-                .foregroundStyle(card.color)
+                .foregroundStyle(card.color.adaptedForDarkMode(colorScheme))
                 .padding(4)
         case .swatch:
             EmptyView()

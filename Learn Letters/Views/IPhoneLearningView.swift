@@ -28,6 +28,7 @@ struct IPhoneLearningView: View {
                     }
                 }
             }
+            .scrollBounceBehavior(.basedOnSize)
             #if os(iOS)
             .listStyle(.insetGrouped)
             #else
@@ -77,6 +78,7 @@ private struct IPhoneCardPager: View {
     let mode: AppMode
     @ObservedObject var speaker: LetterSpeaker
 
+    @Environment(\.colorScheme) private var colorScheme
     @State private var selectedIndex = 0
     @State private var isAutoPlaying = false
     @State private var autoPlayTimer: Timer?
@@ -101,12 +103,12 @@ private struct IPhoneCardPager: View {
                     .tag(index)
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        speak(index: index)
+                        advance()
                     }
             }
         }
         .tabViewStyle(.page(indexDisplayMode: .never))
-        .background(Color.white)
+        .background(Color.appBackground)
         .navigationTitle(mode.title)
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
@@ -143,47 +145,58 @@ private struct IPhoneCardPager: View {
         switch mode {
         case .letters:
             let card = LetterCard.samples[index]
-            VStack(spacing: 20) {
-                Text(card.uppercaseLetter)
-                    .font(.system(size: 400, weight: .bold, design: .rounded))
-                    .foregroundStyle(card.color)
-                    .minimumScaleFactor(0.2)
-                    .lineLimit(1)
-                    .frame(maxHeight: .infinity)
-                Text(card.word)
-                    .font(.largeTitle.weight(.semibold))
+            GeometryReader { geo in
+                VStack(spacing: 12) {
+                    Text(card.uppercaseLetter)
+                        .font(.system(size: geo.size.height * 0.55, weight: .bold, design: .rounded))
+                        .foregroundStyle(card.color.adaptedForDarkMode(colorScheme))
+                        .minimumScaleFactor(0.2)
+                        .lineLimit(1)
+                        .frame(height: geo.size.height * 0.6)
+                    Text(card.word)
+                        .font(.system(size: 44, weight: .semibold))
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .padding(.vertical, 24)
+            .padding(.horizontal, 16)
         case .numbers:
             let card = NumberCard.samples[index]
-            VStack(spacing: 20) {
-                Text(card.displayNumber)
-                    .font(.system(size: 360, weight: .bold, design: .rounded))
-                    .foregroundStyle(card.color)
-                    .minimumScaleFactor(0.2)
-                    .lineLimit(1)
-                    .frame(maxHeight: .infinity)
-                Text(card.word)
-                    .font(.largeTitle.weight(.semibold))
-                IPhoneNumberDots(number: card.number, color: card.color)
-                    .frame(height: 90, alignment: .top)
+            GeometryReader { geo in
+                VStack(spacing: 12) {
+                    Text(card.displayNumber)
+                        .font(.system(size: geo.size.height * 0.45, weight: .bold, design: .rounded))
+                        .foregroundStyle(card.color.adaptedForDarkMode(colorScheme))
+                        .minimumScaleFactor(0.2)
+                        .lineLimit(1)
+                        .frame(height: geo.size.height * 0.5)
+                    Text(card.word)
+                        .font(.system(size: 44, weight: .semibold))
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
+                    IPhoneNumberDots(number: card.number, color: card.color.adaptedForDarkMode(colorScheme))
+                        .frame(height: 90, alignment: .top)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .padding(.vertical, 24)
+            .padding(.horizontal, 16)
         case .shapes:
             let card = ShapeCard.samples[index]
             VStack(spacing: 24) {
-                ShapeSymbolView(kind: card.kind, color: card.color)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding(.horizontal, 24)
+                ShapeSymbolView(kind: card.kind, color: card.color.adaptedForDarkMode(colorScheme))
+                    .frame(maxWidth: 250, maxHeight: 250)
                 Text(card.label)
                     .font(.largeTitle.weight(.semibold))
+                    .foregroundStyle(.primary)
             }
-            .padding(.vertical, 24)
         case .colours:
             let card = ColourCard.samples[index]
             VStack {
                 Text(card.label)
-                    .font(.system(size: 54, weight: .bold, design: .rounded))
+                    .font(.system(size: 54, weight: .bold, design: .default))
                     .foregroundStyle(card.kind.labelColor)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -218,9 +231,15 @@ private struct IPhoneCardPager: View {
             isAutoPlaying = true
             autoPlayStartedAt = Date()
             autoPlayTimer = Timer.scheduledTimer(withTimeInterval: autoPlayInterval, repeats: true) { _ in
-                selectedIndex = (selectedIndex + 1) % cardCount
-                autoPlayStartedAt = Date()
+                advance()
             }
+        }
+    }
+
+    private func advance() {
+        guard cardCount > 0 else { return }
+        withAnimation {
+            selectedIndex = (selectedIndex + 1) % cardCount
         }
     }
 

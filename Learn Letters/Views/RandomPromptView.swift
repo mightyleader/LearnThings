@@ -143,14 +143,14 @@ struct RandomPromptView: View {
         switch prompt.symbol {
         case .letter(let letter):
             Text(letter.uppercased())
-                .font(.system(size: min(size.width, size.height) * 0.92, weight: .bold, design: .default))
+                .font(.system(size: min(size.width, size.height) * 0.92, weight: .bold, design: .rounded))
                 .foregroundStyle(prompt.displayColor)
                 .minimumScaleFactor(0.4)
                 .lineLimit(1)
             .frame(width: size.width, height: size.height)
         case .number(let number):
             Text(String(number))
-                .font(.system(size: min(size.width, size.height) * 0.94, weight: .bold, design: .default))
+                .font(.system(size: min(size.width, size.height) * 0.94, weight: .bold, design: .rounded))
                 .foregroundStyle(prompt.displayColor)
                 .minimumScaleFactor(0.4)
                 .lineLimit(1)

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct DetailView: View {
     let currentLetter: LetterCard
+    @Environment(\.colorScheme) private var colorScheme
     @FocusState var focusedTarget: FocusTarget?
     var autoPlayStartedAt: Date?
     var autoPlayInterval: TimeInterval
@@ -23,7 +24,7 @@ struct DetailView: View {
             let wordSize   = geo.size.height * AppLayout.detailWordHeightRatio
 
             ZStack {
-                Color.white.ignoresSafeArea()
+                Color.appBackground.ignoresSafeArea()
                 
                 Button(action: onSpeak) {
                     VStack(spacing: geo.size.height * AppLayout.detailVStackSpacingRatio) {
@@ -31,9 +32,9 @@ struct DetailView: View {
                             uppercase: currentLetter.uppercaseLetter,
                             lowercase: currentLetter.lowercaseLetter,
                             separator: " ",
-                            uppercaseColor: currentLetter.color,
-                            lowercaseColor: currentLetter.color.opacity(0.35),
-                            font: .system(size: letterSize, weight: .bold, design: .default),
+                            uppercaseColor: currentLetter.color.adaptedForDarkMode(colorScheme),
+                            lowercaseColor: currentLetter.color.adaptedForDarkMode(colorScheme).opacity(0.35),
+                            font: .system(size: letterSize, weight: .bold, design: .rounded),
                             minimumScaleFactor: 0.4,
                             horizontalInset: max(4, letterSize * 0.08)
                         )
@@ -41,7 +42,7 @@ struct DetailView: View {
 
                         Text(currentLetter.word)
                             .font(.system(size: wordSize, weight: .bold, design: .default))
-                            .foregroundStyle(.black)
+                            .foregroundStyle(.primary)
                     }
                     .frame(width: geo.size.width, height: geo.size.height)
                 }

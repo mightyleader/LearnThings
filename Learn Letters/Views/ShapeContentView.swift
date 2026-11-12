@@ -29,7 +29,7 @@ struct ShapeContentView: View {
 
     var body: some View {
         ZStack {
-            Color.white.ignoresSafeArea()
+            Color.appBackground.ignoresSafeArea()
 
             if showingGrid {
                 ShapeGridView(
