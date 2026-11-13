@@ -187,6 +187,7 @@ private struct IPhoneCardPager: View {
             let card = ShapeCard.samples[index]
             VStack(spacing: 24) {
                 ShapeSymbolView(kind: card.kind, color: card.color.adaptedForDarkMode(colorScheme))
+                    .aspectRatio(shapeAspectRatio(for: card.kind), contentMode: .fit)
                     .frame(maxWidth: 250, maxHeight: 250)
                 Text(card.label)
                     .font(.largeTitle.weight(.semibold))
@@ -205,6 +206,17 @@ private struct IPhoneCardPager: View {
             .padding(24)
         case .random:
             EmptyView()
+        }
+    }
+
+    private func shapeAspectRatio(for kind: ShapeKind) -> CGFloat {
+        switch kind {
+        case .oval: 0.72 / 0.42
+        case .rectangle: 0.70 / 0.42
+        case .rhombus: 0.60 / 0.42
+        case .arrow: 0.72 / 0.44
+        case .triangle: 0.54 / 0.60
+        default: 1
         }
     }
 
