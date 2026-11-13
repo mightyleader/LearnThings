@@ -10,10 +10,13 @@ import SwiftUI
 struct ShapeDetailView: View {
     let currentShape: ShapeCard
     @FocusState var focusedTarget: FocusTarget?
+    var autoPlayStartedAt: Date?
+    var autoPlayInterval: TimeInterval
     var onDetailMove: (NavigationDirection) -> Void
     var onDetailPlayPause: () -> Void
     var onExit: () -> Void
     var onSpeak: () -> Void
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         GeometryReader { geo in
@@ -23,17 +26,17 @@ struct ShapeDetailView: View {
             let symbolSize = symbolFrame(for: currentShape.kind, in: geo.size)
 
             ZStack {
-                Color.white.ignoresSafeArea()
+                Color.appBackground.ignoresSafeArea()
 
                 Button(action: onSpeak) {
-                    ShapeSymbolView(kind: currentShape.kind, color: currentShape.color)
+                    ShapeSymbolView(kind: currentShape.kind, color: currentShape.color.adaptedForDarkMode(colorScheme))
                         .frame(width: symbolSize.width, height: symbolSize.height)
                         .padding(.top, topInset)
                         .frame(width: geo.size.width, height: geo.size.height, alignment: .top)
                         .overlay(alignment: .bottom) {
                             Text(currentShape.label)
                                 .font(.system(size: wordSize, weight: .bold, design: .default))
-                                .foregroundStyle(.black)
+                                .foregroundStyle(.primary)
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.8)
                                 .padding(.horizontal, geo.size.width * 0.05)
@@ -54,6 +57,12 @@ struct ShapeDetailView: View {
                             }
                     )
                 #endif
+
+                if let autoPlayStartedAt {
+                    AutoPlayProgressIndicator(startDate: autoPlayStartedAt, duration: autoPlayInterval)
+                        .padding(24)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                }
             }
             #if os(tvOS)
             .onMoveCommand { direction in

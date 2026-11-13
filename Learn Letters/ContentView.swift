@@ -54,7 +54,11 @@ struct ContentView: View {
                 voicesEnabled: $voicesEnabled
             )
         } else {
-            legacyRootView
+            IPhoneLearningView(
+                speaker: speaker,
+                selectedVoiceIdentifier: $selectedVoiceIdentifier,
+                voicesEnabled: $voicesEnabled
+            )
         }
         #else
         legacyRootView
@@ -154,6 +158,7 @@ struct LetterContentView: View {
     @FocusState private var focusedTarget: FocusTarget?
     @State private var isAutoPlayActive = false
     @State private var autoPlayTimer: Timer?
+    @State private var detailAutoPlayStartedAt: Date?
 
     private let alphabet = LetterCard.samples
     private let gridDwellTime: TimeInterval = 1.0
@@ -165,7 +170,7 @@ struct LetterContentView: View {
 
     var body: some View {
         ZStack {
-            Color.white.ignoresSafeArea()
+            Color.appBackground.ignoresSafeArea()
 
             if showingGrid {
                 GridView(
@@ -180,6 +185,8 @@ struct LetterContentView: View {
                 DetailView(
                     currentLetter: currentLetter,
                     focusedTarget: _focusedTarget,
+                    autoPlayStartedAt: detailAutoPlayStartedAt,
+                    autoPlayInterval: detailDwellTime,
                     onDetailMove: handleHeroMove,
                     onDetailPlayPause: handleDetailPlayPause,
                     onExit: handleExitToGrid,
@@ -278,6 +285,7 @@ struct LetterContentView: View {
     }
 
     private func scheduleNextDetailLetter() {
+        detailAutoPlayStartedAt = Date()
         autoPlayTimer = Timer.scheduledTimer(withTimeInterval: detailDwellTime, repeats: false) { _ in
             if isAutoPlayActive {
                 nextLetter()
@@ -290,6 +298,7 @@ struct LetterContentView: View {
         isAutoPlayActive = false
         autoPlayTimer?.invalidate()
         autoPlayTimer = nil
+        detailAutoPlayStartedAt = nil
     }
 
     private func handleGridMove(_ direction: NavigationDirection) {
@@ -358,6 +367,7 @@ struct NumberContentView: View {
     @FocusState private var focusedTarget: FocusTarget?
     @State private var isAutoPlayActive = false
     @State private var autoPlayTimer: Timer?
+    @State private var detailAutoPlayStartedAt: Date?
 
     private let numbers = NumberCard.samples
     private let gridDwellTime: TimeInterval = 1.0
@@ -369,7 +379,7 @@ struct NumberContentView: View {
 
     var body: some View {
         ZStack {
-            Color.white.ignoresSafeArea()
+            Color.appBackground.ignoresSafeArea()
 
             if showingGrid {
                 NumberGridView(
@@ -384,6 +394,8 @@ struct NumberContentView: View {
                 NumberDetailView(
                     currentNumber: currentNumber,
                     focusedTarget: _focusedTarget,
+                    autoPlayStartedAt: detailAutoPlayStartedAt,
+                    autoPlayInterval: detailDwellTime,
                     onDetailMove: handleHeroMove,
                     onDetailPlayPause: handleDetailPlayPause,
                     onExit: handleExitToGrid,
@@ -482,6 +494,7 @@ struct NumberContentView: View {
     }
 
     private func scheduleNextDetailNumber() {
+        detailAutoPlayStartedAt = Date()
         autoPlayTimer = Timer.scheduledTimer(withTimeInterval: detailDwellTime, repeats: false) { _ in
             if isAutoPlayActive {
                 nextNumber()
@@ -494,6 +507,7 @@ struct NumberContentView: View {
         isAutoPlayActive = false
         autoPlayTimer?.invalidate()
         autoPlayTimer = nil
+        detailAutoPlayStartedAt = nil
     }
 
     private func handleGridMove(_ direction: NavigationDirection) {
@@ -577,6 +591,12 @@ private struct IPadLearningView: View {
     @State private var currentNumberIndex: Int = 0
     @State private var currentShapeIndex: Int = 0
     @State private var currentColourIndex: Int = 0
+
+    @State private var isAutoPlaying = false
+    @State private var isAutoAdvancing = false
+    @State private var autoPlayTimer: Timer?
+    @State private var autoPlayStartedAt: Date?
+    private let autoPlayDwellTime: TimeInterval = 4.0
 
     private let sidebarModeFontSize: CGFloat = 22
     private let sidebarItemFontSize: CGFloat = 20
@@ -688,6 +708,28 @@ private struct IPadLearningView: View {
                 }
                 .navigationTitle(detailTitle)
                 .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    if isDetailCardSelected {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            HStack(spacing: 8) {
+                                if isAutoPlaying, let autoPlayStartedAt {
+                                    AutoPlayProgressIndicator(
+                                        startDate: autoPlayStartedAt,
+                                        duration: autoPlayDwellTime,
+                                        size: 28
+                                    )
+                                    .padding(.leading, 8)
+                                }
+                                Button(action: toggleAutoPlay) {
+                                    Image(systemName: isAutoPlaying ? "pause.fill" : "play.fill")
+                                        .frame(width: 44, height: 44)
+                                }
+                                .accessibilityLabel(isAutoPlaying ? "Pause" : "Play")
+                                .fixedSize()
+                            }
+                        }
+                    }
+                }
             }
         }
         .navigationSplitViewStyle(.balanced)
@@ -697,9 +739,73 @@ private struct IPadLearningView: View {
                 selection = .mode(.letters)
             }
         }
+        .onDisappear(perform: stopAutoPlay)
         .onChange(of: selection) { _, newValue in
+            if isAutoAdvancing {
+                isAutoAdvancing = false
+            } else {
+                stopAutoPlay()
+            }
             handleSelectionChange(newValue)
         }
+    }
+
+    private var isDetailCardSelected: Bool {
+        switch selection {
+        case .letter, .number, .shape, .colour:
+            return true
+        default:
+            return false
+        }
+    }
+
+    private func toggleAutoPlay() {
+        if isAutoPlaying {
+            stopAutoPlay()
+        } else {
+            isAutoPlaying = true
+            scheduleNextAutoPlayCard()
+        }
+    }
+
+    private func scheduleNextAutoPlayCard() {
+        autoPlayStartedAt = Date()
+        autoPlayTimer = Timer.scheduledTimer(withTimeInterval: autoPlayDwellTime, repeats: false) { _ in
+            if isAutoPlaying {
+                advanceToNextCard()
+                scheduleNextAutoPlayCard()
+            }
+        }
+    }
+
+    private func stopAutoPlay() {
+        isAutoPlaying = false
+        autoPlayTimer?.invalidate()
+        autoPlayTimer = nil
+        autoPlayStartedAt = nil
+    }
+
+    private func advanceToNextCard() {
+        let next: IPadSidebarSelection
+        switch selection {
+        case .letter:
+            currentLetterIndex = (currentLetterIndex + 1) % LetterCard.samples.count
+            next = .letter(LetterCard.samples[currentLetterIndex].id)
+        case .number:
+            currentNumberIndex = (currentNumberIndex + 1) % NumberCard.samples.count
+            next = .number(NumberCard.samples[currentNumberIndex].number)
+        case .shape:
+            currentShapeIndex = (currentShapeIndex + 1) % ShapeCard.samples.count
+            next = .shape(ShapeCard.samples[currentShapeIndex].kind)
+        case .colour:
+            currentColourIndex = (currentColourIndex + 1) % ColourCard.samples.count
+            next = .colour(ColourCard.samples[currentColourIndex].kind)
+        default:
+            stopAutoPlay()
+            return
+        }
+        isAutoAdvancing = true
+        selection = next
     }
 
     @ViewBuilder
@@ -938,19 +1044,28 @@ private struct IPadLearningView: View {
 private struct IPadPosterPage<Content: View>: View {
     let title: String
     let subtitle: String?
-    @ViewBuilder let content: Content
+    let content: (CGSize) -> Content
     @Environment(\.colorScheme) private var colorScheme
+    @State private var headerHeight: CGFloat = 0
 
-    init(title: String, subtitle: String? = nil, @ViewBuilder content: () -> Content) {
+    init(title: String, subtitle: String? = nil, @ViewBuilder content: @escaping (CGSize) -> Content) {
         self.title = title
         self.subtitle = subtitle
-        self.content = content()
+        self.content = content
     }
 
     var body: some View {
         GeometryReader { geometry in
+            let verticalSpacing = min(geometry.size.height * 0.032, 28)
+            let horizontalPadding = min(geometry.size.width * 0.045, 36)
+            let bottomPadding = min(geometry.size.height * 0.045, 36)
+            let contentSize = CGSize(
+                width: max(0, geometry.size.width - (horizontalPadding * 2)),
+                height: max(0, geometry.size.height - headerHeight - verticalSpacing - bottomPadding)
+            )
+
             ScrollView {
-                VStack(spacing: min(geometry.size.height * 0.032, 28)) {
+                VStack(spacing: verticalSpacing) {
                     VStack(spacing: min(geometry.size.height * 0.01, 10)) {
                         Text(title)
                             .font(.system(size: min(geometry.size.width * 0.06, 44), weight: .bold, design: .default))
@@ -964,13 +1079,19 @@ private struct IPadPosterPage<Content: View>: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.top, min(geometry.size.height * 0.035, 30))
+                    .onGeometryChange(for: CGFloat.self) { proxy in
+                        proxy.size.height
+                    } action: { newHeight in
+                        headerHeight = newHeight
+                    }
 
-                    content
+                    content(contentSize)
                 }
-                .padding(.horizontal, min(geometry.size.width * 0.045, 36))
-                .padding(.bottom, min(geometry.size.height * 0.045, 36))
+                .padding(.horizontal, horizontalPadding)
+                .padding(.bottom, bottomPadding)
                 .frame(maxWidth: .infinity)
             }
+            .scrollBounceBehavior(.basedOnSize)
             .background(Color(uiColor: .systemBackground))
         }
     }
@@ -981,53 +1102,50 @@ private struct LetterPosterGrid: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        IPadPosterPage(title: "Letters", subtitle: "Tap a letter") {
-            GeometryReader { geometry in
-                let columns = max(4, min(7, Int(geometry.size.width / 112)))
-                let spacing = min(geometry.size.width * 0.018, 16)
-                let itemWidth = (geometry.size.width - (CGFloat(columns - 1) * spacing)) / CGFloat(columns)
-                let tileHeight = min(max(itemWidth * 1.18, 108), 156)
-                let letterSize = tileHeight * 0.40
-                let wordSize = tileHeight * 0.14
+        IPadPosterPage(title: "Letters", subtitle: "Tap a letter") { availableSize in
+            let columns = max(4, min(7, Int(availableSize.width / 112)))
+            let spacing = min(availableSize.width * 0.018, 16)
+            let itemWidth = (availableSize.width - (CGFloat(columns - 1) * spacing)) / CGFloat(columns)
+            let tileHeight = posterTileHeight(count: LetterCard.samples.count, columns: columns, spacing: spacing, availableHeight: availableSize.height, preferred: min(max(itemWidth * 1.18, 108), 156), minimum: 80)
+            let letterSize = tileHeight * 0.40
+            let wordSize = tileHeight * 0.14
 
-                LazyVGrid(columns: Array(repeating: GridItem(.fixed(itemWidth), spacing: spacing), count: columns), spacing: spacing) {
-                    ForEach(LetterCard.samples) { card in
-                        let symbolColor = posterLetterColor(for: card)
+            LazyVGrid(columns: Array(repeating: GridItem(.fixed(itemWidth), spacing: spacing), count: columns), spacing: spacing) {
+                ForEach(LetterCard.samples) { card in
+                    let symbolColor = posterLetterColor(for: card)
 
-                        Button {
-                            onSelectLetter(card.id)
-                        } label: {
-                            VStack(spacing: tileHeight * 0.07) {
-                                LetterPairLabel(
-                                    uppercase: card.uppercaseLetter,
-                                    lowercase: card.lowercaseLetter,
-                                    separator: " ",
-                                    uppercaseColor: symbolColor,
-                                    lowercaseColor: symbolColor.opacity(0.72),
-                                    font: .system(size: letterSize, weight: .bold, design: .default),
-                                    minimumScaleFactor: 0.55,
-                                    horizontalInset: max(4, letterSize * 0.08)
-                                )
-
-                                Text(card.word)
-                                    .font(.system(size: wordSize, weight: .semibold, design: .default))
-                                    .foregroundStyle(colorScheme == .dark ? .white : .primary)
-                                    .lineLimit(1)
-                                    .minimumScaleFactor(0.7)
-                            }
-                            .frame(width: itemWidth, height: tileHeight)
-                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                    .strokeBorder(colorScheme == .dark ? .white.opacity(0.12) : .clear, lineWidth: 1)
+                    Button {
+                        onSelectLetter(card.id)
+                    } label: {
+                        VStack(spacing: tileHeight * 0.07) {
+                            LetterPairLabel(
+                                uppercase: card.uppercaseLetter,
+                                lowercase: card.lowercaseLetter,
+                                separator: " ",
+                                uppercaseColor: symbolColor,
+                                lowercaseColor: symbolColor.opacity(0.72),
+                                font: .system(size: letterSize, weight: .bold, design: .rounded),
+                                minimumScaleFactor: 0.55,
+                                horizontalInset: max(4, letterSize * 0.08)
                             )
+
+                            Text(card.word)
+                                .font(.system(size: wordSize, weight: .semibold, design: .default))
+                                .foregroundStyle(colorScheme == .dark ? .white : .primary)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
                         }
-                        .buttonStyle(.plain)
+                        .frame(width: itemWidth, height: tileHeight)
+                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .strokeBorder(colorScheme == .dark ? .white.opacity(0.12) : .clear, lineWidth: 1)
+                        )
                     }
+                    .buttonStyle(.plain)
                 }
-                .frame(maxWidth: .infinity)
             }
-            .frame(minHeight: 640)
+            .frame(maxWidth: .infinity)
         }
     }
 
@@ -1045,50 +1163,47 @@ private struct NumberPosterGrid: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        IPadPosterPage(title: "Numbers", subtitle: "Tap a number") {
-            GeometryReader { geometry in
-                let columns = max(3, min(4, Int(geometry.size.width / 172)))
-                let spacing = min(geometry.size.width * 0.022, 18)
-                let itemWidth = (geometry.size.width - (CGFloat(columns - 1) * spacing)) / CGFloat(columns)
-                let tileHeight = min(max(itemWidth * 1.16, 140), 210)
-                let numberSize = tileHeight * 0.34
-                let wordSize = tileHeight * 0.11
-                let dotsAreaHeight = tileHeight * 0.24
+        IPadPosterPage(title: "Numbers", subtitle: "Tap a number") { availableSize in
+            let columns = max(3, min(4, Int(availableSize.width / 172)))
+            let spacing = min(availableSize.width * 0.022, 18)
+            let itemWidth = (availableSize.width - (CGFloat(columns - 1) * spacing)) / CGFloat(columns)
+            let tileHeight = posterTileHeight(count: NumberCard.samples.count, columns: columns, spacing: spacing, availableHeight: availableSize.height, preferred: min(max(itemWidth * 1.16, 140), 210), minimum: 110)
+            let numberSize = tileHeight * 0.34
+            let wordSize = tileHeight * 0.11
+            let dotsAreaHeight = tileHeight * 0.24
 
-                LazyVGrid(columns: Array(repeating: GridItem(.fixed(itemWidth), spacing: spacing), count: columns), spacing: spacing) {
-                    ForEach(NumberCard.samples) { card in
-                        Button {
-                            onSelectNumber(card.number)
-                        } label: {
-                            VStack(spacing: tileHeight * 0.05) {
-                                Text(card.displayNumber)
-                                    .font(.system(size: numberSize, weight: .bold, design: .default))
-                                    .foregroundStyle(card.color)
-                                    .minimumScaleFactor(0.6)
-                                    .lineLimit(1)
+            LazyVGrid(columns: Array(repeating: GridItem(.fixed(itemWidth), spacing: spacing), count: columns), spacing: spacing) {
+                ForEach(NumberCard.samples) { card in
+                    Button {
+                        onSelectNumber(card.number)
+                    } label: {
+                        VStack(spacing: tileHeight * 0.05) {
+                            Text(card.displayNumber)
+                                .font(.system(size: numberSize, weight: .bold, design: .rounded))
+                                .foregroundStyle(card.color)
+                                .minimumScaleFactor(0.6)
+                                .lineLimit(1)
 
-                                Text(card.word)
-                                    .font(.system(size: wordSize, weight: .semibold, design: .default))
-                                    .foregroundStyle(colorScheme == .dark ? .white : .primary)
-                                    .lineLimit(1)
-                                    .minimumScaleFactor(0.7)
+                            Text(card.word)
+                                .font(.system(size: wordSize, weight: .semibold, design: .default))
+                                .foregroundStyle(colorScheme == .dark ? .white : .primary)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
 
-                                PosterNumberDots(number: card.number)
-                                    .frame(height: dotsAreaHeight, alignment: .top)
-                            }
-                            .frame(width: itemWidth, height: tileHeight)
-                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                    .strokeBorder(colorScheme == .dark ? .white.opacity(0.12) : .clear, lineWidth: 1)
-                            )
+                            PosterNumberDots(number: card.number)
+                                .frame(height: dotsAreaHeight, alignment: .top)
                         }
-                        .buttonStyle(.plain)
+                        .frame(width: itemWidth, height: tileHeight)
+                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .strokeBorder(colorScheme == .dark ? .white.opacity(0.12) : .clear, lineWidth: 1)
+                        )
                     }
+                    .buttonStyle(.plain)
                 }
-                .frame(maxWidth: .infinity)
             }
-            .frame(minHeight: 520)
+            .frame(maxWidth: .infinity)
         }
     }
 }
@@ -1098,45 +1213,43 @@ private struct ShapePosterGrid: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        IPadPosterPage(title: "Shapes", subtitle: "Tap a shape") {
-            GeometryReader { geometry in
-                let columns = max(3, min(4, Int(geometry.size.width / 170)))
-                let spacing = min(geometry.size.width * 0.022, 18)
-                let itemWidth = (geometry.size.width - (CGFloat(columns - 1) * spacing)) / CGFloat(columns)
-                let tileHeight = min(max(itemWidth * 1.08, 148), 212)
-                let labelSize = tileHeight * 0.10
+        IPadPosterPage(title: "Shapes", subtitle: "Tap a shape") { availableSize in
+            let columns = max(3, min(4, Int(availableSize.width / 170)))
+            let spacing = min(availableSize.width * 0.022, 18)
+            let itemWidth = (availableSize.width - (CGFloat(columns - 1) * spacing)) / CGFloat(columns)
+            let tileHeight = posterTileHeight(count: ShapeCard.samples.count, columns: columns, spacing: spacing, availableHeight: availableSize.height, preferred: min(max(itemWidth * 1.08, 148), 212), minimum: 104)
+            let labelSize = tileHeight * 0.10
+            let shapeBase = min(itemWidth * 0.64, tileHeight * 0.7)
 
-                LazyVGrid(columns: Array(repeating: GridItem(.fixed(itemWidth), spacing: spacing), count: columns), spacing: spacing) {
-                    ForEach(ShapeCard.samples) { card in
-                        Button {
-                            onSelectShape(card.kind)
-                        } label: {
-                            VStack(spacing: tileHeight * 0.10) {
-                                ShapeSymbolView(kind: card.kind, color: card.color)
-                                    .frame(width: shapeSize(for: card.kind, baseWidth: itemWidth * 0.64).width, height: shapeSize(for: card.kind, baseWidth: itemWidth * 0.64).height)
-                                    .frame(maxHeight: .infinity)
+            LazyVGrid(columns: Array(repeating: GridItem(.fixed(itemWidth), spacing: spacing), count: columns), spacing: spacing) {
+                ForEach(ShapeCard.samples) { card in
+                    Button {
+                        onSelectShape(card.kind)
+                    } label: {
+                        VStack(spacing: tileHeight * 0.10) {
+                            ShapeSymbolView(kind: card.kind, color: card.color)
+                                .frame(width: shapeSize(for: card.kind, baseWidth: shapeBase).width, height: shapeSize(for: card.kind, baseWidth: shapeBase).height)
+                                .frame(maxHeight: .infinity)
 
-                                Text(card.label)
-                                    .font(.system(size: labelSize, weight: .semibold, design: .default))
-                                    .foregroundStyle(colorScheme == .dark ? .white : .primary)
-                                    .lineLimit(1)
-                                    .minimumScaleFactor(0.7)
-                            }
-                            .padding(.top, tileHeight * 0.12)
-                            .padding(.bottom, tileHeight * 0.12)
-                            .frame(width: itemWidth, height: tileHeight)
-                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                    .strokeBorder(colorScheme == .dark ? .white.opacity(0.12) : .clear, lineWidth: 1)
-                            )
+                            Text(card.label)
+                                .font(.system(size: labelSize, weight: .semibold, design: .default))
+                                .foregroundStyle(colorScheme == .dark ? .white : .primary)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
                         }
-                        .buttonStyle(.plain)
+                        .padding(.top, tileHeight * 0.12)
+                        .padding(.bottom, tileHeight * 0.12)
+                        .frame(width: itemWidth, height: tileHeight)
+                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .strokeBorder(colorScheme == .dark ? .white.opacity(0.12) : .clear, lineWidth: 1)
+                        )
                     }
+                    .buttonStyle(.plain)
                 }
-                .frame(maxWidth: .infinity)
             }
-            .frame(minHeight: 560)
+            .frame(maxWidth: .infinity)
         }
     }
 
@@ -1163,51 +1276,55 @@ private struct ColourPosterGrid: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        IPadPosterPage(title: "Colours", subtitle: "Tap a colour") {
-            GeometryReader { geometry in
-                let columns = max(3, min(4, Int(geometry.size.width / 172)))
-                let spacing = min(geometry.size.width * 0.022, 18)
-                let itemWidth = (geometry.size.width - (CGFloat(columns - 1) * spacing)) / CGFloat(columns)
-                let tileHeight = min(max(itemWidth * 0.92, 126), 176)
-                let labelSize = tileHeight * 0.115
+        IPadPosterPage(title: "Colours", subtitle: "Tap a colour") { availableSize in
+            let columns = max(3, min(4, Int(availableSize.width / 172)))
+            let spacing = min(availableSize.width * 0.022, 18)
+            let itemWidth = (availableSize.width - (CGFloat(columns - 1) * spacing)) / CGFloat(columns)
+            let tileHeight = posterTileHeight(count: ColourCard.samples.count, columns: columns, spacing: spacing, availableHeight: availableSize.height, preferred: min(max(itemWidth * 0.92, 126), 176), minimum: 90)
+            let labelSize = tileHeight * 0.115
 
-                LazyVGrid(columns: Array(repeating: GridItem(.fixed(itemWidth), spacing: spacing), count: columns), spacing: spacing) {
-                    ForEach(ColourCard.samples) { card in
-                        Button {
-                            onSelectColour(card.kind)
-                        } label: {
-                            ZStack(alignment: .bottomLeading) {
-                                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                    .fill(card.color)
-                                    .overlay {
-                                        if card.kind == .white {
-                                            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                                .strokeBorder(Color(white: 0.76), lineWidth: 2)
-                                        }
+            LazyVGrid(columns: Array(repeating: GridItem(.fixed(itemWidth), spacing: spacing), count: columns), spacing: spacing) {
+                ForEach(ColourCard.samples) { card in
+                    Button {
+                        onSelectColour(card.kind)
+                    } label: {
+                        ZStack(alignment: .bottomLeading) {
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .fill(card.color)
+                                .overlay {
+                                    if card.kind == .white {
+                                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                            .strokeBorder(Color(white: 0.76), lineWidth: 2)
                                     }
+                                }
 
-                                Text(card.label)
-                                    .font(.system(size: labelSize, weight: .bold, design: .default))
-                                    .foregroundStyle(card.kind.labelColor)
-                                    .lineLimit(1)
-                                    .minimumScaleFactor(0.7)
-                                    .padding(.horizontal, tileHeight * 0.12)
-                                    .padding(.vertical, tileHeight * 0.10)
-                            }
-                            .frame(width: itemWidth, height: tileHeight)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                    .strokeBorder(colorScheme == .dark ? .white.opacity(0.12) : .clear, lineWidth: 1)
-                            )
+                            Text(card.label)
+                                .font(.system(size: labelSize, weight: .bold, design: .default))
+                                .foregroundStyle(card.kind.labelColor)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
+                                .padding(.horizontal, tileHeight * 0.12)
+                                .padding(.vertical, tileHeight * 0.10)
                         }
-                        .buttonStyle(.plain)
+                        .frame(width: itemWidth, height: tileHeight)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .strokeBorder(colorScheme == .dark ? .white.opacity(0.12) : .clear, lineWidth: 1)
+                        )
                     }
+                    .buttonStyle(.plain)
                 }
-                .frame(maxWidth: .infinity)
             }
-            .frame(minHeight: 480)
+            .frame(maxWidth: .infinity)
         }
     }
+}
+
+// Fits all rows in the available height when possible, never shrinking below `minimum`.
+private func posterTileHeight(count: Int, columns: Int, spacing: CGFloat, availableHeight: CGFloat, preferred: CGFloat, minimum: CGFloat) -> CGFloat {
+    let rows = max(1, (count + columns - 1) / columns)
+    let fitting = (availableHeight - (CGFloat(rows - 1) * spacing)) / CGFloat(rows)
+    return floor(max(minimum, min(preferred, fitting)))
 }
 
 private struct PosterNumberDots: View {
@@ -1260,7 +1377,7 @@ private struct IPadLetterDetailView: View {
 
             VStack(spacing: 28) {
                 Text(card.uppercaseLetter)
-                    .font(.system(size: symbolSize, weight: .bold, design: .default))
+                    .font(.system(size: symbolSize, weight: .bold, design: .rounded))
                     .foregroundStyle(card.color)
                     .minimumScaleFactor(0.5)
                     .lineLimit(1)
@@ -1277,27 +1394,8 @@ private struct IPadLetterDetailView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding(32)
-            .contentShape(Rectangle())
-
-            Color.clear
-                .contentShape(Rectangle())
-                .gesture(
-                    SpatialTapGesture()
-                        .onEnded { value in
-                            handleTap(at: value.location, width: geometry.size.width)
-                        }
-                )
         }
-        .contentShape(Rectangle())
-        .highPriorityGesture(swipeGesture(onSwipeLeft: onSwipeLeft, onSwipeRight: onSwipeRight))
-    }
-
-    private func handleTap(at location: CGPoint, width: CGFloat) {
-        if location.x < width * 0.3 {
-            onSwipeRight()
-        } else if location.x > width * 0.7 {
-            onSwipeLeft()
-        }
+        .detailNavigationGestures(onBack: onSwipeRight, onForward: onSwipeLeft)
     }
 }
 
@@ -1314,7 +1412,7 @@ private struct IPadNumberDetailView: View {
 
             VStack(spacing: 28) {
                 Text(card.displayNumber)
-                    .font(.system(size: symbolSize, weight: .bold, design: .default))
+                    .font(.system(size: symbolSize, weight: .bold, design: .rounded))
                     .foregroundStyle(card.color)
                     .minimumScaleFactor(0.5)
                     .lineLimit(1)
@@ -1330,27 +1428,8 @@ private struct IPadNumberDetailView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding(32)
-            .contentShape(Rectangle())
-
-            Color.clear
-                .contentShape(Rectangle())
-                .gesture(
-                    SpatialTapGesture()
-                        .onEnded { value in
-                            handleTap(at: value.location, width: geometry.size.width)
-                        }
-                )
         }
-        .contentShape(Rectangle())
-        .highPriorityGesture(swipeGesture(onSwipeLeft: onSwipeLeft, onSwipeRight: onSwipeRight))
-    }
-
-    private func handleTap(at location: CGPoint, width: CGFloat) {
-        if location.x < width * 0.3 {
-            onSwipeRight()
-        } else if location.x > width * 0.7 {
-            onSwipeLeft()
-        }
+        .detailNavigationGestures(onBack: onSwipeRight, onForward: onSwipeLeft)
     }
 
     private func dotsForNumber(_ number: Int) -> some View {
@@ -1419,27 +1498,8 @@ private struct IPadShapeDetailView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding(32)
-            .contentShape(Rectangle())
-
-            Color.clear
-                .contentShape(Rectangle())
-                .gesture(
-                    SpatialTapGesture()
-                        .onEnded { value in
-                            handleTap(at: value.location, width: geometry.size.width)
-                        }
-                )
         }
-        .contentShape(Rectangle())
-        .highPriorityGesture(swipeGesture(onSwipeLeft: onSwipeLeft, onSwipeRight: onSwipeRight))
-    }
-
-    private func handleTap(at location: CGPoint, width: CGFloat) {
-        if location.x < width * 0.3 {
-            onSwipeRight()
-        } else if location.x > width * 0.7 {
-            onSwipeLeft()
-        }
+        .detailNavigationGestures(onBack: onSwipeRight, onForward: onSwipeLeft)
     }
 
     private func shapeSymbolSize(maxSize: CGFloat) -> CGSize {
@@ -1477,45 +1537,62 @@ private struct IPadColourDetailView: View {
                     .minimumScaleFactor(0.7)
                     .padding(.horizontal, geometry.size.width * 0.08)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-
-                Color.clear
-                    .contentShape(Rectangle())
-                    .gesture(
-                        SpatialTapGesture()
-                            .onEnded { value in
-                                handleTap(at: value.location, width: geometry.size.width)
-                            }
-                    )
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .contentShape(Rectangle())
-        .highPriorityGesture(swipeGesture(onSwipeLeft: onSwipeLeft, onSwipeRight: onSwipeRight))
+        .detailNavigationGestures(onBack: onSwipeRight, onForward: onSwipeLeft)
+    }
+}
+
+// One gesture handles both taps and swipes so neither can swallow the other.
+// Movement under the threshold is a tap: left third goes back, the rest goes forward.
+private struct DetailNavigationGestures: ViewModifier {
+    let onBack: () -> Void
+    let onForward: () -> Void
+
+    private let swipeThreshold: CGFloat = 40
+
+    func body(content: Content) -> some View {
+        GeometryReader { geometry in
+            content
+                .frame(width: geometry.size.width, height: geometry.size.height)
+                .contentShape(Rectangle())
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onEnded { value in
+                            handleGesture(value, width: geometry.size.width)
+                        }
+                )
+        }
     }
 
-    private func handleTap(at location: CGPoint, width: CGFloat) {
-        if location.x < width * 0.3 {
-            onSwipeRight()
-        } else if location.x > width * 0.7 {
-            onSwipeLeft()
+    private func handleGesture(_ value: DragGesture.Value, width: CGFloat) {
+        let horizontal = value.translation.width
+        let vertical = value.translation.height
+
+        if abs(horizontal) < swipeThreshold && abs(vertical) < swipeThreshold {
+            if value.startLocation.x < width / 3 {
+                onBack()
+            } else {
+                onForward()
+            }
+            return
+        }
+
+        guard abs(horizontal) > abs(vertical) else { return }
+
+        if horizontal < 0 {
+            onForward()
+        } else {
+            onBack()
         }
     }
 }
 
-private func swipeGesture(onSwipeLeft: @escaping () -> Void, onSwipeRight: @escaping () -> Void) -> some Gesture {
-    DragGesture(minimumDistance: 24)
-        .onEnded { gesture in
-            let horizontal = gesture.translation.width
-            let vertical = gesture.translation.height
-
-            guard abs(horizontal) > abs(vertical), abs(horizontal) > 40 else { return }
-
-            if horizontal < 0 {
-                onSwipeLeft()
-            } else {
-                onSwipeRight()
-            }
-        }
+private extension View {
+    func detailNavigationGestures(onBack: @escaping () -> Void, onForward: @escaping () -> Void) -> some View {
+        modifier(DetailNavigationGestures(onBack: onBack, onForward: onForward))
+    }
 }
 
 #endif

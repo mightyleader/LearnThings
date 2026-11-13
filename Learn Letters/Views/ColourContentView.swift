@@ -14,6 +14,7 @@ struct ColourContentView: View {
     @FocusState private var focusedTarget: FocusTarget?
     @State private var isAutoPlayActive = false
     @State private var autoPlayTimer: Timer?
+    @State private var detailAutoPlayStartedAt: Date?
 
     private let colours = ColourCard.samples
     private let columns = 4
@@ -24,7 +25,7 @@ struct ColourContentView: View {
 
     var body: some View {
         ZStack {
-            Color.white.ignoresSafeArea()
+            Color.appBackground.ignoresSafeArea()
 
             if showingGrid {
                 ColourGridView(
@@ -39,6 +40,8 @@ struct ColourContentView: View {
                 ColourDetailView(
                     currentColour: currentColour,
                     focusedTarget: _focusedTarget,
+                    autoPlayStartedAt: detailAutoPlayStartedAt,
+                    autoPlayInterval: detailDwellTime,
                     onDetailMove: handleDetailMove,
                     onDetailPlayPause: handleDetailPlayPause,
                     onExit: handleExitToGrid,
@@ -100,6 +103,9 @@ struct ColourContentView: View {
     }
 
     private func scheduleNextColour(after delay: TimeInterval) {
+        if !showingGrid {
+            detailAutoPlayStartedAt = Date()
+        }
         autoPlayTimer = Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { _ in
             guard isAutoPlayActive else { return }
             selectedIndex = (selectedIndex + 1) % colours.count
@@ -112,6 +118,7 @@ struct ColourContentView: View {
         isAutoPlayActive = false
         autoPlayTimer?.invalidate()
         autoPlayTimer = nil
+        detailAutoPlayStartedAt = nil
     }
 
     private func handleGridMove(_ direction: NavigationDirection) {

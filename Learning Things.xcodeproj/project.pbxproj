@@ -40,6 +40,17 @@
 		D4EC46372FF3B8E3004BEBA5 /* ColourDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EC46376FF3B8E3004BEBA5 /* ColourDetailView.swift */; };
 		D4EC46373FF3B8E3004BEBA5 /* ColourGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EC46377FF3B8E3004BEBA5 /* ColourGridView.swift */; };
 		D4EC46378FF3B8E3004BEBA5 /* RandomPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EC46379FF3B8E3004BEBA5 /* RandomPromptView.swift */; };
+		A1B2C3D4E5F60718293A4B5C /* IPhoneLearningView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5D /* IPhoneLearningView.swift */; };
+		E10000000000000000000001 /* WatchLearningApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1000000000000000000000B /* WatchLearningApp.swift */; };
+		E10000000000000000000002 /* WatchContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1000000000000000000000C /* WatchContentView.swift */; };
+		E10000000000000000000003 /* LetterCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EC46339FF3B8E3004BEBA5 /* LetterCard.swift */; };
+		E10000000000000000000004 /* NumberCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EC4633BFF3B8E3004BEBA5 /* NumberCard.swift */; };
+		E10000000000000000000005 /* ShapeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EC4635EFF3B8E3004BEBA5 /* ShapeCard.swift */; };
+		E10000000000000000000006 /* ColourCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EC46374FF3B8E3004BEBA5 /* ColourCard.swift */; };
+		E10000000000000000000007 /* LearningPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4EC4635DFF3B8E3004BEBA5 /* LearningPalette.swift */; };
+		E10000000000000000000008 /* LetterWords.txt in Resources */ = {isa = PBXBuildFile; fileRef = D4EC46347FF3B8E3004BEBA5 /* LetterWords.txt */; };
+		E10000000000000000000009 /* LetterColors.txt in Resources */ = {isa = PBXBuildFile; fileRef = D4EC46346FF3B8E3004BEBA5 /* LetterColors.txt */; };
+		E20000000000000000000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E20000000000000000000002 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -74,10 +85,22 @@
 		D4EC46376FF3B8E3004BEBA5 /* ColourDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColourDetailView.swift; sourceTree = "<group>"; };
 		D4EC46377FF3B8E3004BEBA5 /* ColourGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColourGridView.swift; sourceTree = "<group>"; };
 		D4EC46379FF3B8E3004BEBA5 /* RandomPromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomPromptView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B5D /* IPhoneLearningView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPhoneLearningView.swift; sourceTree = "<group>"; };
+		E1000000000000000000000B /* WatchLearningApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchLearningApp.swift; sourceTree = "<group>"; };
+		E1000000000000000000000C /* WatchContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchContentView.swift; sourceTree = "<group>"; };
+		E20000000000000000000002 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		E1000000000000000000000F /* Learning Things Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Learning Things Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		D4EC46212FF3B8E1004BEBA5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E10000000000000000000018 /* Watch App Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -91,6 +114,7 @@
 			isa = PBXGroup;
 			children = (
 				D4EC46242FF3B8E1004BEBA5 /* Learning Things.app */,
+				E1000000000000000000000F /* Learning Things Watch App.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -106,6 +130,7 @@
 				D4EC46353FF3B8E3004BEBA5 /* Views */,
 				D4EC46355FF3B8E3004BEBA5 /* Fonts */,
 				D4EC46356FF3B8E3004BEBA5,
+				E10000000000000000000010 /* Learn Letters Watch */,
 				D4EC46252FF3B8E1004BEBA5 /* Products */,
 			);
 			path = "Learn Letters";
@@ -155,6 +180,7 @@
 				D4EC46343FF3B8E3004BEBA5 /* NumberDetailView.swift */,
 				D4EC46344FF3B8E3004BEBA5 /* NumberGridView.swift */,
 				D4EC46379FF3B8E3004BEBA5 /* RandomPromptView.swift */,
+				A1B2C3D4E5F60718293A4B5D /* IPhoneLearningView.swift */,
 				D4EC46362FF3B8E3004BEBA5 /* ShapeContentView.swift */,
 				D4EC46361FF3B8E3004BEBA5 /* ShapeDetailView.swift */,
 				D4EC46360FF3B8E3004BEBA5 /* ShapeGridView.swift */,
@@ -188,6 +214,16 @@
 			);
 			sourceTree = "<group>";
 		};
+		E10000000000000000000010 /* Learn Letters Watch */ = {
+			isa = PBXGroup;
+			children = (
+				E1000000000000000000000B /* WatchLearningApp.swift */,
+				E1000000000000000000000C /* WatchContentView.swift */,
+				E20000000000000000000002 /* Assets.xcassets */,
+			);
+			path = "../Learn Letters Watch";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -210,6 +246,23 @@
 			productReference = D4EC46242FF3B8E1004BEBA5 /* Learning Things.app */;
 			productType = "com.apple.product-type.application";
 		};
+		E10000000000000000000013 /* Learning Things Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E1000000000000000000001C /* Build configuration list for PBXNativeTarget "Learning Things Watch App" */;
+			buildPhases = (
+				E10000000000000000000012 /* Sources */,
+				E10000000000000000000018 /* Watch App Frameworks */,
+				E10000000000000000000016 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Learning Things Watch App";
+			productName = "Learning Things Watch App";
+			productReference = E1000000000000000000000F /* Learning Things Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -222,6 +275,10 @@
 				TargetAttributes = {
 					D4EC46232FF3B8E1004BEBA5 = {
 						CreatedOnToolsVersion = 26.6;
+					};
+					E10000000000000000000013 = {
+						CreatedOnToolsVersion = 27.2;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -240,6 +297,7 @@
 			projectRoot = "";
 			targets = (
 				D4EC46232FF3B8E1004BEBA5 /* Learning Things */,
+				E10000000000000000000013 /* Learning Things Watch App */,
 			);
 		};
 /* End PBXProject section */
@@ -255,6 +313,16 @@
 				D4EC46333FF3B8E3004BEBA5 /* (null) in Resources */,
 				D4EC46334FF3B8E3004BEBA5 /* (null) in Resources */,
 				D4EC46335FF3B8E3004BEBA5 /* (null) in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E10000000000000000000016 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E10000000000000000000008 /* LetterWords.txt in Resources */,
+				E10000000000000000000009 /* LetterColors.txt in Resources */,
+				E20000000000000000000001 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -291,7 +359,22 @@
 				D4EC46372FF3B8E3004BEBA5 /* ColourDetailView.swift in Sources */,
 				D4EC46373FF3B8E3004BEBA5 /* ColourGridView.swift in Sources */,
 				D4EC46378FF3B8E3004BEBA5 /* RandomPromptView.swift in Sources */,
+				A1B2C3D4E5F60718293A4B5C /* IPhoneLearningView.swift in Sources */,
 				D4EC4632FFF3B8E3004BEBA5 /* VoiceSelectionView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E10000000000000000000012 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E10000000000000000000001 /* WatchLearningApp.swift in Sources */,
+				E10000000000000000000002 /* WatchContentView.swift in Sources */,
+				E10000000000000000000003 /* LetterCard.swift in Sources */,
+				E10000000000000000000004 /* NumberCard.swift in Sources */,
+				E10000000000000000000005 /* ShapeCard.swift in Sources */,
+				E10000000000000000000006 /* ColourCard.swift in Sources */,
+				E10000000000000000000007 /* LearningPalette.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -442,7 +525,7 @@
 				INFOPLIST_FILE = "Learn-Letters-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				"INFOPLIST_KEY_UISupportedInterfaceOrientations~ipad" = "UIInterfaceOrientationPortrait,UIInterfaceOrientationPortraitUpsideDown,UIInterfaceOrientationLandscapeLeft,UIInterfaceOrientationLandscapeRight";
 				"INFOPLIST_KEY_UISupportedInterfaceOrientations~iphone" = UIInterfaceOrientationPortrait;
@@ -463,7 +546,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "2,3";
+				TARGETED_DEVICE_FAMILY = "1,2,3";
 				TVOS_DEPLOYMENT_TARGET = 27.0;
 			};
 			name = Debug;
@@ -483,7 +566,7 @@
 				INFOPLIST_FILE = "Learn-Letters-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				"INFOPLIST_KEY_UISupportedInterfaceOrientations~ipad" = "UIInterfaceOrientationPortrait,UIInterfaceOrientationPortraitUpsideDown,UIInterfaceOrientationLandscapeLeft,UIInterfaceOrientationLandscapeRight";
 				"INFOPLIST_KEY_UISupportedInterfaceOrientations~iphone" = UIInterfaceOrientationPortrait;
@@ -504,8 +587,60 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "2,3";
+				TARGETED_DEVICE_FAMILY = "1,2,3";
 				TVOS_DEPLOYMENT_TARGET = 27.0;
+			};
+			name = Release;
+		};
+		E10000000000000000000020 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = P8ZWFYKNC8;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Learn Things";
+				INFOPLIST_KEY_WKWatchOnly = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "cocoadelica.co.uk.Learning-Things.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = NO;
+				SUPPORTED_PLATFORMS = "watchos watchsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		E10000000000000000000021 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = P8ZWFYKNC8;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Learn Things";
+				INFOPLIST_KEY_WKWatchOnly = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "cocoadelica.co.uk.Learning-Things.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = NO;
+				SUPPORTED_PLATFORMS = "watchos watchsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
 			};
 			name = Release;
 		};
@@ -526,6 +661,15 @@
 			buildConfigurations = (
 				D4EC46302FF3B8E2004BEBA5 /* Debug */,
 				D4EC46312FF3B8E2004BEBA5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E1000000000000000000001C /* Build configuration list for PBXNativeTarget "Learning Things Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E10000000000000000000020 /* Debug */,
+				E10000000000000000000021 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -9,7 +9,10 @@ import SwiftUI
 
 struct DetailView: View {
     let currentLetter: LetterCard
+    @Environment(\.colorScheme) private var colorScheme
     @FocusState var focusedTarget: FocusTarget?
+    var autoPlayStartedAt: Date?
+    var autoPlayInterval: TimeInterval
     var onDetailMove: (NavigationDirection) -> Void
     var onDetailPlayPause: () -> Void
     var onExit: () -> Void
@@ -21,7 +24,7 @@ struct DetailView: View {
             let wordSize   = geo.size.height * AppLayout.detailWordHeightRatio
 
             ZStack {
-                Color.white.ignoresSafeArea()
+                Color.appBackground.ignoresSafeArea()
                 
                 Button(action: onSpeak) {
                     VStack(spacing: geo.size.height * AppLayout.detailVStackSpacingRatio) {
@@ -29,9 +32,9 @@ struct DetailView: View {
                             uppercase: currentLetter.uppercaseLetter,
                             lowercase: currentLetter.lowercaseLetter,
                             separator: " ",
-                            uppercaseColor: currentLetter.color,
-                            lowercaseColor: currentLetter.color.opacity(0.35),
-                            font: .system(size: letterSize, weight: .bold, design: .default),
+                            uppercaseColor: currentLetter.color.adaptedForDarkMode(colorScheme),
+                            lowercaseColor: currentLetter.color.adaptedForDarkMode(colorScheme).opacity(0.35),
+                            font: .system(size: letterSize, weight: .bold, design: .rounded),
                             minimumScaleFactor: 0.4,
                             horizontalInset: max(4, letterSize * 0.08)
                         )
@@ -39,7 +42,7 @@ struct DetailView: View {
 
                         Text(currentLetter.word)
                             .font(.system(size: wordSize, weight: .bold, design: .default))
-                            .foregroundStyle(.black)
+                            .foregroundStyle(.primary)
                     }
                     .frame(width: geo.size.width, height: geo.size.height)
                 }
@@ -57,6 +60,12 @@ struct DetailView: View {
                             }
                     )
                 #endif
+
+                if let autoPlayStartedAt {
+                    AutoPlayProgressIndicator(startDate: autoPlayStartedAt, duration: autoPlayInterval)
+                        .padding(24)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                }
             }
             #if os(tvOS)
             .onMoveCommand { direction in
@@ -85,4 +94,31 @@ struct DetailView: View {
         }
     }
 
+}
+
+struct AutoPlayProgressIndicator: View {
+    let startDate: Date
+    let duration: TimeInterval
+    var size: CGFloat = 34
+
+    var body: some View {
+        TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: false)) { context in
+            let elapsed = context.date.timeIntervalSince(startDate)
+            let remaining = max(0, 1 - elapsed / duration)
+
+            ZStack {
+                Circle()
+                    .stroke(.secondary.opacity(0.25), lineWidth: 3)
+
+                Circle()
+                    .trim(from: 0, to: remaining)
+                    .stroke(.primary, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+            }
+            .frame(width: size, height: size)
+            .accessibilityLabel("Time until next item")
+            .accessibilityValue("\(Int(remaining * duration)) seconds")
+        }
+        .allowsHitTesting(false)
+    }
 }
