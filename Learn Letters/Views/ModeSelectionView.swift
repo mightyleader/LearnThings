@@ -11,13 +11,28 @@ struct ModeSelectionView: View {
     @Binding var selectedMode: AppMode?
     @Binding var voicesEnabled: Bool
     var onOpenVoiceSettings: () -> Void = {}
+    @Environment(\.colorScheme) private var colorScheme
     @FocusState private var focusedButton: ModeButton?
     @State private var lastFocusedBottomMode: ModeButton = .shapes
 
     private let cardCornerRadius: CGFloat = 22
-    private let buttonBase = Color(red: 0.97, green: 0.98, blue: 1.0)
-    private let buttonBorder = Color(red: 0.88, green: 0.90, blue: 0.94)
-    private let inkColor = Color(red: 0.18, green: 0.22, blue: 0.32)
+    private var buttonBase: Color {
+        colorScheme == .dark
+            ? Color(red: 0.12, green: 0.14, blue: 0.18)
+            : Color(red: 0.97, green: 0.98, blue: 1.0)
+    }
+
+    private var buttonBorder: Color {
+        colorScheme == .dark
+            ? Color.white.opacity(0.2)
+            : Color(red: 0.88, green: 0.90, blue: 0.94)
+    }
+
+    private var inkColor: Color {
+        colorScheme == .dark
+            ? .white
+            : Color(red: 0.18, green: 0.22, blue: 0.32)
+    }
 
     enum ModeButton {
         case letters

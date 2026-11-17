@@ -20,6 +20,7 @@ private struct WatchCardBrowser: View {
     let mode: WatchLearningMode
     @Environment(\.colorScheme) private var colorScheme
     @State private var crownValue = 0.0
+    @FocusState private var isCardFocused: Bool
 
     private var cards: [WatchLearningCard] {
         mode.cards
@@ -58,10 +59,21 @@ private struct WatchCardBrowser: View {
                 .padding(.vertical, 4)
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .contentShape(Rectangle())
         .onTapGesture {
-            crownValue = Double((selectedIndex + 1) % cards.count)
+            moveCard(by: 1)
         }
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 25)
+                .onEnded { value in
+                    guard abs(value.translation.width) > abs(value.translation.height) else { return }
+                    moveCard(by: value.translation.width < 0 ? 1 : -1)
+                }
+        )
+        .focusable()
+        .focused($isCardFocused)
+        .onAppear { isCardFocused = true }
         .digitalCrownRotation(
             $crownValue,
             from: 0,
@@ -71,6 +83,10 @@ private struct WatchCardBrowser: View {
             isContinuous: false,
             isHapticFeedbackEnabled: true
         )
+    }
+
+    private func moveCard(by offset: Int) {
+        crownValue = Double((selectedIndex + offset + cards.count) % cards.count)
     }
 
     @ViewBuilder
